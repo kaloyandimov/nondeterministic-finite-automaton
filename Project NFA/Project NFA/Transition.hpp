@@ -9,27 +9,27 @@
 #ifndef Transition_hpp
 #define Transition_hpp
 
-#include <memory>
-
-class State;
+#include "State.hpp"
 
 class Transition {
- public:
+public:
     Transition() = default;
-    Transition(std::shared_ptr<State> other, char symbol);
+    Transition(State lhs, State rhs, char symbol);
     
-    std::shared_ptr<State> get_other() const;
+    void set_lhs(const State& lhs);
+    void set_rhs(const State& rhs);
+    void set_symbol(char symbol);
+    
+    State get_lhs() const;
+    State get_rhs() const;
     char get_symbol() const;
-    
-    void set_other(std::shared_ptr<State>);
-    void set_symbol(char);
     
     bool operator<(const Transition&) const;
     
- private:
-    std::shared_ptr<State> other_;
+private:
+    State lhs_;
+    State rhs_;
     char symbol_{'\0'};
 };
-
 
 #endif /* Transition_hpp */

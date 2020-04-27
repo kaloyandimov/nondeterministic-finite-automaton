@@ -10,6 +10,7 @@
 		C05C42492454F721006C9CA4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05C42482454F721006C9CA4 /* main.cpp */; };
 		C05C42512454F73C006C9CA4 /* Transition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05C424F2454F73C006C9CA4 /* Transition.cpp */; };
 		C05C42542454F8F4006C9CA4 /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05C42522454F8F4006C9CA4 /* State.cpp */; };
+		C0908A36245596DF003D68D1 /* NFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0908A34245596DF003D68D1 /* NFA.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,8 @@
 		C05C42502454F73C006C9CA4 /* Transition.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Transition.hpp; sourceTree = "<group>"; };
 		C05C42522454F8F4006C9CA4 /* State.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = State.cpp; sourceTree = "<group>"; };
 		C05C42532454F8F4006C9CA4 /* State.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = State.hpp; sourceTree = "<group>"; };
+		C0908A34245596DF003D68D1 /* NFA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NFA.cpp; sourceTree = "<group>"; };
+		C0908A35245596DF003D68D1 /* NFA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NFA.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,10 +66,12 @@
 		C05C42472454F721006C9CA4 /* Project NFA */ = {
 			isa = PBXGroup;
 			children = (
-				C05C424F2454F73C006C9CA4 /* Transition.cpp */,
-				C05C42502454F73C006C9CA4 /* Transition.hpp */,
 				C05C42522454F8F4006C9CA4 /* State.cpp */,
 				C05C42532454F8F4006C9CA4 /* State.hpp */,
+				C05C424F2454F73C006C9CA4 /* Transition.cpp */,
+				C05C42502454F73C006C9CA4 /* Transition.hpp */,
+				C0908A34245596DF003D68D1 /* NFA.cpp */,
+				C0908A35245596DF003D68D1 /* NFA.hpp */,
 				C05C42482454F721006C9CA4 /* main.cpp */,
 			);
 			path = "Project NFA";
@@ -130,6 +135,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C05C42512454F73C006C9CA4 /* Transition.cpp in Sources */,
+				C0908A36245596DF003D68D1 /* NFA.cpp in Sources */,
 				C05C42492454F721006C9CA4 /* main.cpp in Sources */,
 				C05C42542454F8F4006C9CA4 /* State.cpp in Sources */,
 			);

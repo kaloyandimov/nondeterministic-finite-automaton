@@ -8,16 +8,11 @@
 
 #include "State.hpp"
 
-int State::s_last_id = 0;
+int State::last_id_ = 0;
 
-State::State(bool is_final, const std::set<Transition>& transitions):
-    transitions_{transitions},
-    is_final_{is_final},
-    id_{s_last_id++} {}
-
-std::set<Transition> State::get_transitions() const {
-    return transitions_;
-}
+State::State(bool is_final):
+    id_{last_id_++},
+    is_final_{is_final} {}
 
 int State::get_id() const {
     return id_;
@@ -27,13 +22,14 @@ bool State::get_is_final() const {
     return is_final_;
 }
 
-void State::set_transitions(const std::set<Transition>& transitions) {
-    transitions_ = transitions;
-}
-
 void State::set_id(int id) {
     id_ = id;
 }
+
 void State::set_is_final(bool is_final) {
     is_final_ = is_final;
+}
+
+bool State::operator<(const State& other) const {
+    return id_ < other.id_;
 }

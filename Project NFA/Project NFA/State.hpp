@@ -9,28 +9,23 @@
 #ifndef State_hpp
 #define State_hpp
 
-#include <iostream>
-#include <set>
-#include "Transition.hpp"
-
 class State {
  public:
-    explicit State(bool is_final = false, const std::set<Transition>& transitions = {});
+    explicit State(bool is_final = false);
     
-    std::set<Transition> get_transitions() const;
+    void set_id(int id) ;
+    void set_is_final(bool is_final);
+    
     int get_id() const;
     bool get_is_final() const;
     
-    void set_transitions(const std::set<Transition>&);
-    void set_id(int);
-    void set_is_final(bool);
+    bool operator<(const State& other) const;
     
  private:
-    std::set<Transition> transitions_;
     int id_{-1};
     bool is_final_{false};
     
-    static int s_last_id;
+    static int last_id_;
 };
 
 #endif /* State_hpp */
