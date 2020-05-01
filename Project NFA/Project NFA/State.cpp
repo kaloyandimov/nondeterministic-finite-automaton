@@ -8,28 +8,32 @@
 
 #include "State.hpp"
 
-int State::last_id_ = 0;
+size_t State::last_id_{0};
 
-State::State(bool is_final):
-    id_{last_id_++},
-    is_final_{is_final} {}
+State::State(const std::multimap<State, char>& transitions):
+    transitions_{transitions},
+    id_{last_id_++} {}
 
-int State::get_id() const {
+const std::multimap<State, char>& State::get_transitions() const {
+    return transitions_;
+}
+
+size_t State::get_id() const {
     return id_;
 }
 
-bool State::get_is_final() const {
-    return is_final_;
-}
-
-void State::set_id(int id) {
-    id_ = id;
-}
-
-void State::set_is_final(bool is_final) {
-    is_final_ = is_final;
+void State::add_transition(const std::pair<State, char>& transition) {
+    transitions_.emplace(transition);
 }
 
 bool State::operator<(const State& other) const {
     return id_ < other.id_;
+}
+
+std::ostream& operator<<(std::ostream& out, const State& state) {
+    for (std::pair<State,char> transition : state.transitions_) {
+        out << state.id_ << " --> " << transition.first.id_ << ": " << transition.second << '\n';
+    }
+    
+    return out;
 }

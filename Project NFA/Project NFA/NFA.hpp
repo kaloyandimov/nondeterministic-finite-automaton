@@ -9,32 +9,26 @@
 #ifndef NFA_hpp
 #define NFA_hpp
 
-#include <iostream>
 #include <set>
-#include "Transition.hpp"
+#include "State.hpp"
 
-class NFA{
+class NFA {
  public:
-    NFA() = default;
-    NFA(const std::set<State>& states, const std::set<Transition>& transitions, const State& initial_state);
+    NFA(const std::set<State>& states, const std::set<State>& final_states, const State& initial_state);
     
-    void set_states(const std::set<State>& states);
-    void set_transitions(const std::set<Transition>& transitions);
-    void set_id(int id);
+    const std::set<State>& get_states() const;
+    const std::set<State>& get_final_states() const;
+    size_t get_id() const;
     
-    std::set<State> get_states() const;
-    std::set<Transition> get_transitions() const;
-    int get_id() const;
-    
-    friend std::ostream& operator<<(std::ostream& out, const NFA& nfa);
+    bool operator==(int num) const;
     
  private:
     std::set<State> states_;
-    std::set<Transition> transitions_;
+    std::set<State> final_states_;
     State initial_state_;
-    int id_{-1};
+    size_t id_;
     
-    static int last_id_;
+    static size_t last_id_;
 };
 
 #endif /* NFA_hpp */

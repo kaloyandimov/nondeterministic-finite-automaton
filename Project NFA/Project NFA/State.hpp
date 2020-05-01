@@ -9,23 +9,28 @@
 #ifndef State_hpp
 #define State_hpp
 
+#include <map>
+#include <utility>
+#include <iostream>
+
 class State {
  public:
-    explicit State(bool is_final = false);
+    State(const std::multimap<State, char>& transitions = {});
     
-    void set_id(int id) ;
-    void set_is_final(bool is_final);
+    const std::multimap<State, char>& get_transitions() const;
+    size_t get_id() const;
     
-    int get_id() const;
-    bool get_is_final() const;
+    void add_transition(const std::pair<State, char>& transition);
     
     bool operator<(const State& other) const;
     
- private:
-    int id_{-1};
-    bool is_final_{false};
+    friend std::ostream& operator<<(std::ostream&, const State&);
     
-    static int last_id_;
+ private:
+    std::multimap<State, char> transitions_;
+    size_t id_;
+    
+    static size_t last_id_;
 };
 
 #endif /* State_hpp */
