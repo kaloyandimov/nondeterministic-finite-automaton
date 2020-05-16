@@ -9,22 +9,26 @@
 #ifndef NFA_hpp
 #define NFA_hpp
 
-#include <set>
 #include "State.hpp"
 
 class NFA {
  public:
-    NFA(const std::set<State>& states, const std::set<State>& final_states, const State& initial_state);
+    NFA(const std::vector<State>& all_states,
+        const std::vector<State>& final_states,
+        const State& initial_state);
     
-    const std::set<State>& get_states() const;
-    const std::set<State>& get_final_states() const;
+    const std::vector<State>& get_all_states() const;
+    const std::vector<State>& get_final_states() const;
+    State get_initial_state() const;
     size_t get_id() const;
     
-    bool operator==(int num) const;
+    bool operator==(size_t id) const;
+    
+    friend std::ostream& operator<<(std::ostream&, const NFA&);
     
  private:
-    std::set<State> states_;
-    std::set<State> final_states_;
+    std::vector<State> all_states_;
+    std::vector<State> final_states_;
     State initial_state_;
     size_t id_;
     

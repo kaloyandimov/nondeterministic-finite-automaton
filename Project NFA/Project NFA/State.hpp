@@ -9,25 +9,32 @@
 #ifndef State_hpp
 #define State_hpp
 
-#include <map>
+#include <vector>
 #include <utility>
 #include <iostream>
+#include <algorithm>
+
+class State;
+using Transition = std::pair<char, State>;
 
 class State {
  public:
-    State(const std::multimap<State, char>& transitions = {});
+    State();
     
-    const std::multimap<State, char>& get_transitions() const;
+    const std::vector<Transition>& get_transitions() const;
     size_t get_id() const;
+
+    bool operator<(const State&) const;
+    bool operator==(const State&) const;
     
-    void add_transition(const std::pair<State, char>& transition);
-    
-    bool operator<(const State& other) const;
+    void add_transition(char, State);
+    void add_transition(const Transition&);
+    void add_epsilon_transition(State);
     
     friend std::ostream& operator<<(std::ostream&, const State&);
     
  private:
-    std::multimap<State, char> transitions_;
+    std::vector<Transition> transitions_;
     size_t id_;
     
     static size_t last_id_;
