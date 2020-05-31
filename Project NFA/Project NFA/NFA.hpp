@@ -17,10 +17,12 @@ class NFA {
         const std::vector<State>& final_states,
         const State& initial_state);
     
-    const std::vector<State>& get_all_states() const;
-    const std::vector<State>& get_final_states() const;
-    State get_initial_state() const;
-    size_t get_id() const;
+    const std::vector<State>& all_states() const;
+    const std::vector<State>& final_states() const;
+    const State& initial_state() const;
+    size_t id() const;
+    
+    void set_id(size_t);
     
     bool operator==(size_t id) const;
     

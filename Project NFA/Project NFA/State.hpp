@@ -14,27 +14,33 @@
 #include <iostream>
 #include <algorithm>
 
-class State;
-using Transition = std::pair<char, State>;
+using Transition = std::pair<char, size_t>;
 
 class State {
  public:
-    State();
+    explicit State(bool is_final = false);
     
-    const std::vector<Transition>& get_transitions() const;
-    size_t get_id() const;
-
-    bool operator<(const State&) const;
-    bool operator==(const State&) const;
+    const std::vector<Transition>& transitions() const;
+    bool is_final() const;
+    size_t id() const;
     
-    void add_transition(char, State);
+    void set_finality(bool);
+    
+    void rename(size_t);
     void add_transition(const Transition&);
-    void add_epsilon_transition(State);
+    void add_transition(char, const State&);
+    void add_epsilon_transition(const State&);
+
+    static void reset_last_id();
+    
+    bool operator==(const State&) const;
+    bool operator<(const State&) const;
     
     friend std::ostream& operator<<(std::ostream&, const State&);
     
  private:
     std::vector<Transition> transitions_;
+    bool final_;
     size_t id_;
     
     static size_t last_id_;
