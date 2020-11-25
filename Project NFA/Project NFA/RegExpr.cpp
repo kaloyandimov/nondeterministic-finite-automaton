@@ -8,6 +8,6 @@
 
 #include "RegExpr.hpp"
 
-std::ostream& operator<<(std::ostream& out, const RegExpr& expression) {
-    return out << expression.print();
+std::ostream& operator<<(std::ostream& out, const RegExpr& expr) {
+    return out << expr.print();
 }

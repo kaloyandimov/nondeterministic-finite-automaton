@@ -8,20 +8,17 @@
 
 #include "Singleton.hpp"
 
-Singleton::Singleton(char symbol):
-    symbol_{symbol} {}
+Singleton::Singleton(char _symbol):
+    symbol{_symbol} {}
 
-NFA
-Singleton::evaluate() const {
-    return singleton_(symbol_);
+NFA Singleton::evaluate() const {
+    return do_singleton(symbol);
 }
 
-std::string
-Singleton::print() const {
-    return {symbol_};
+std::string Singleton::print() const {
+    return {symbol};
 }
 
-std::unique_ptr<RegExpr>
-Singleton::clone() const {
-    return std::make_unique<Singleton>(symbol_);
+std::unique_ptr<RegExpr> Singleton::clone() const {
+    return std::make_unique<Singleton>(symbol);
 }

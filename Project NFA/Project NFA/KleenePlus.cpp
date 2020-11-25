@@ -8,17 +8,17 @@
 
 #include "KleenePlus.hpp"
 
-KleenePlus::KleenePlus(const std::unique_ptr<RegExpr>& expression):
-    expression_{expression->clone()} {}
+KleenePlus::KleenePlus(const RegExpr& _expr):
+    expr{_expr.clone()} {}
 
 NFA KleenePlus::evaluate() const {
-    return kleene_plus_(expression_->evaluate());
+    return do_kleene_plus(expr->evaluate());
 }
 
 std::string KleenePlus::print() const {
-    return '(' + expression_->print() + ')' + '*';
+    return '(' + expr->print() + ')' + '*';
 }
 
 std::unique_ptr<RegExpr> KleenePlus::clone() const {
-    return std::make_unique<KleenePlus>(expression_);
+    return std::make_unique<KleenePlus>(*expr);
 }

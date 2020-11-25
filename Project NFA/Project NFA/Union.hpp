@@ -9,20 +9,24 @@
 #ifndef Union_hpp
 #define Union_hpp
 
+#include <string>
+#include <memory>
+
+#include "Functions.hpp"
 #include "RegExpr.hpp"
+#include "NFA.hpp"
 
 class Union: public RegExpr {
  public:
-    Union(const std::unique_ptr<RegExpr>&,
-          const std::unique_ptr<RegExpr>&);
+    Union(const RegExpr&, const RegExpr&);
     
     NFA evaluate() const override;
     std::string print() const override;
     std::unique_ptr<RegExpr> clone() const override;
     
  private:
-    std::unique_ptr<RegExpr> lhs_;
-    std::unique_ptr<RegExpr> rhs_;
+    std::unique_ptr<RegExpr> lhs;
+    std::unique_ptr<RegExpr> rhs;
 };
 
 #endif /* Union_hpp */

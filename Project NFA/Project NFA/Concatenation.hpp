@@ -9,20 +9,24 @@
 #ifndef Concatenation_hpp
 #define Concatenation_hpp
 
+#include <string>
+#include <memory>
+
+#include "Functions.hpp"
 #include "RegExpr.hpp"
+#include "NFA.hpp"
 
 class Concatenation: public RegExpr {
  public:
-    Concatenation(const std::unique_ptr<RegExpr>&,
-                  const std::unique_ptr<RegExpr>&);
+    Concatenation(const RegExpr&, const RegExpr&);
     
     NFA evaluate() const override;
     std::string print() const override;
     std::unique_ptr<RegExpr> clone() const override;
     
  private:
-    std::unique_ptr<RegExpr> lhs_;
-    std::unique_ptr<RegExpr> rhs_;
+    std::unique_ptr<RegExpr> lhs;
+    std::unique_ptr<RegExpr> rhs;
 };
 
 #endif /* Concatenation_hpp */

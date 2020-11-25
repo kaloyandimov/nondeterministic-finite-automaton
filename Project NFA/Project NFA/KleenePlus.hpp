@@ -9,18 +9,23 @@
 #ifndef KleenePlus_hpp
 #define KleenePlus_hpp
 
+#include <string>
+#include <memory>
+
+#include "Functions.hpp"
 #include "RegExpr.hpp"
+#include "NFA.hpp"
 
 class KleenePlus: public RegExpr {
  public:
-    KleenePlus(const std::unique_ptr<RegExpr>&);
+    KleenePlus(const RegExpr&);
     
     NFA evaluate() const override;
     std::string print() const override;
     std::unique_ptr<RegExpr> clone() const override;
     
  private:
-    std::unique_ptr<RegExpr> expression_;
+    std::unique_ptr<RegExpr> expr;
 };
 
 #endif /* KleenePlus_hpp */

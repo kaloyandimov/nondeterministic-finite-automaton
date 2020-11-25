@@ -9,12 +9,14 @@
 #ifndef RegExpr_hpp
 #define RegExpr_hpp
 
-#include <memory>
+#include <ostream>
 #include <string>
-#include "Functions.hpp"
+#include <memory>
 
-class RegExpr {
- public:
+#include "Functions.hpp"
+#include "NFA.hpp"
+
+struct RegExpr {
     RegExpr() = default;
     RegExpr(const RegExpr&) = delete;
     RegExpr& operator=(const RegExpr&) = delete;

@@ -8,22 +8,18 @@
 
 #include "Union.hpp"
 
-Union::Union(const std::unique_ptr<RegExpr>& lhs,
-             const std::unique_ptr<RegExpr>& rhs):
-    lhs_{lhs->clone()},
-    rhs_{rhs->clone()} {}
+Union::Union(const RegExpr& _lhs, const RegExpr& _rhs):
+    lhs{_lhs.clone()},
+    rhs{_rhs.clone()} {}
 
-NFA
-Union::evaluate() const {
-    return union_(lhs_->evaluate(), rhs_->evaluate());
+NFA Union::evaluate() const {
+    return do_union(lhs->evaluate(), rhs->evaluate());
 }
 
-std::string
-Union::print() const {
-    return '(' + lhs_->print() + '+' + rhs_->print() + ')';;
+std::string Union::print() const {
+    return "(" + lhs->print() + "+" + rhs->print() + ")";
 }
 
-std::unique_ptr<RegExpr>
-Union::clone() const {
-    return std::make_unique<Union>(lhs_, rhs_);
+std::unique_ptr<RegExpr> Union::clone() const {
+    return std::make_unique<Union>(*lhs, *rhs);
 }
