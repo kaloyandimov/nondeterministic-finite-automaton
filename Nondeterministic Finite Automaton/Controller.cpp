@@ -17,14 +17,14 @@ bool Controller::basic(const std::string& cmd) const {
     return cmd == "help" || cmd == "open" || cmd == "exit";
 }
 
-Command Controller::find(const Parser& input) {
+Command Controller::get_command(const Parser& input) {
     for (const Command& cmd : commands) {
         if (input.parsed_name() == cmd.name()) {
             return cmd;
         }
     }
     
-    return Command{};
+    throw CommandNotFoundException{"Command not found"};
 }
 
 void Controller::run() {
@@ -36,16 +36,23 @@ void Controller::run() {
         in_ >> input;
         
         if (!path_.has_filename() && !basic(input.parsed_name())) {
-            out_ << "First open a file\n"; continue;
+            err_ << "First open a file\n"; continue;
         }
         
-        Command cmd{find(input)};
-        
-        if (cmd) {
-            out_ << cmd(*this, input.parsed_args());
+        try {
+            get_command(input)(*this, input.parsed_args());
         }
-        else {
-            out_  << "command not found: " << input.parsed_name() << "\n";
+        catch (const CommandNotFoundException& e) {
+            err_ << e.what() << "\n";
+        }
+        catch (const InvalidArgumentCountException& e) {
+            err_ << e.what() << "\n";
+        }
+        catch (const std::invalid_argument& e) {
+            err_ << "Invalid ID\n";
+        }
+        catch (const std::out_of_range& e) {
+            err_ << "ID not found\n";
         }
     }
 }
@@ -73,137 +80,76 @@ bool Controller::init_commands() {
     
     register_command("print", "<id>", "print automaton", 1,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            try {
-                ctrl.out_ << ctrl.automata_.at(std::stoull(args[0]));
-            }
-            catch (const std::invalid_argument&) {
-                ctrl.err_ << "invalid id: " << args[0] << "\n";
-            }
-            catch (const std::out_of_range&) {
-                ctrl.err_ << "id not found: " << args[0] << "\n";
-            }
+            ctrl.out_ << ctrl.automata_.at(std::stoull(args[0]));
         }
     );
 
     register_command("empty", "<id>", "check if automaton's language is empty", 1,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            try {
-                ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).empty() << "\n";
-            }
-            catch (const std::invalid_argument&) {
-                ctrl.err_ << "invalid id: " << args[0] << "\n";
-            }
-            catch (const std::out_of_range&) {
-                ctrl.err_ << "id not found: " << args[0] << "\n";
-            }
+            ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).empty() << "\n";
         }
     );
 
     register_command("deterministic", "<id>", "check if automaton is deterministic", 1,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            try {
-                ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).deterministic() << "\n";
-            }
-            catch (const std::invalid_argument&) {
-                ctrl.err_ << "invalid id: " << args[0] << "\n";
-            }
-            catch (const std::out_of_range&) {
-                ctrl.err_ << "id not found: " << args[0] << "\n";
-            }
+            ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).deterministic() << "\n";
     });
 
     register_command("recognise", "<id> <word>", "check if automaton recognises word", 2,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            try {
-                ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).recognises(args[1]) << "\n";
-            }
-            catch (const std::invalid_argument&) {
-                ctrl.err_ << "invalid id: " << args[0] << "\n";
-            }
-            catch (const std::out_of_range&) {
-                ctrl.err_ << "id not found: " << args[0] << "\n";
-            }
+            ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).recognises(args[1]) << "\n";
         }
     );
     
     register_command("reg", "<regex>", "create automaton from regular expression", 1,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            try {
-                Automaton automaton{parse(args[0])->evaluate()};
-                automaton.set_id(ctrl.automata_.size());
+            Automaton automaton{parse(args[0])->evaluate()};
+            automaton.set_id(ctrl.automata_.size());
 
-                ctrl.automata_.push_back(std::move(automaton));
+            ctrl.automata_.push_back(std::move(automaton));
                 
-                ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
-            }
-            catch (const std::exception& e) {
-                ctrl.err_ << "invalid expression: " << e.what() << "\n";
-            }
+            ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
         }
     );
 
     register_command("union", "<id1> <id2>", "find the union of two automata", 2,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            try {
-                Automaton automaton{
-                    ctrl.automata_.at(std::stoull(args[0]))
-                    +
-                    ctrl.automata_.at(std::stoull(args[1]))
-                };
-                automaton.set_id(ctrl.automata_.size());
+            Automaton automaton{
+                ctrl.automata_.at(std::stoull(args[0]))
+                +
+                ctrl.automata_.at(std::stoull(args[1]))
+            };
+            automaton.set_id(ctrl.automata_.size());
 
-                ctrl.automata_.push_back(std::move(automaton));
+            ctrl.automata_.push_back(std::move(automaton));
                 
-                ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
-            }
-            catch (const std::invalid_argument&) {
-                ctrl.err_ << "invalid id: " << args[0] << " or " << args[1] << "\n";
-            }
-            catch (const std::out_of_range&) {
-                ctrl.err_ << "id not found: " << args[0] << " or " << args[1] << "\n";
-            }
+            ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
         }
     );
 
     register_command("concat", "<id1> <id2>", "find the concatenation of two automata", 2,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            try {
-                Automaton automaton{
-                    ctrl.automata_.at(std::stoull(args[0]))
-                    *
-                    ctrl.automata_.at(std::stoull(args[1]))
-                };
-                automaton.set_id(ctrl.automata_.size());
+            Automaton automaton{
+                ctrl.automata_.at(std::stoull(args[0]))
+                *
+                ctrl.automata_.at(std::stoull(args[1]))
+            };
+            automaton.set_id(ctrl.automata_.size());
 
-                ctrl.automata_.push_back(std::move(automaton));
+            ctrl.automata_.push_back(std::move(automaton));
                 
-                ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
-            }
-            catch (const std::invalid_argument&) {
-                ctrl.err_ << "invalid id: " << args[0] << " or " << args[1] << "\n";
-            }
-            catch (const std::out_of_range& e) {
-                ctrl.err_ << "id not found: " << args[0] << " or " << args[1] << "\n";
-            }
+            ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
         }
     );
 
     register_command("kleene", "<id>", "find the kleene closure of automaton", 1,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            try {
-                Automaton automaton{*ctrl.automata_.at(std::stoull(args[0]))};
-                automaton.set_id(ctrl.automata_.size());
+            Automaton automaton{*ctrl.automata_.at(std::stoull(args[0]))};
+            automaton.set_id(ctrl.automata_.size());
                 
-                ctrl.automata_.push_back(std::move(automaton));
+            ctrl.automata_.push_back(std::move(automaton));
 
-                ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
-            }
-            catch (const std::invalid_argument&) {
-                ctrl.err_ << "invalid id: " << args[0] << "\n";
-            }
-            catch (const std::out_of_range&) {
-                ctrl.err_ << "id not found: " << args[0] << "\n";
-            }
+            ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
         }
     );
 
@@ -219,7 +165,7 @@ bool Controller::init_commands() {
                 ctrl.err_ << "New file created\n"; return;
             }
             
-            ctrl.err_ << "File opened successfully\n";
+            ctrl.out_ << "File opened successfully\n";
             
             
             ulong count{0};
@@ -277,17 +223,9 @@ bool Controller::init_commands() {
                 ctrl.err_ << "File could not be opened\n"; return;
             }
 
-            try {
-                file << ctrl.automata_.at(std::stoull(args[0]));
+            file << ctrl.automata_.at(std::stoull(args[0]));
 
-                ctrl.out_ << "Atomaton " << args[0] << " successfully saved\n";
-            }
-            catch (const std::invalid_argument&) {
-                ctrl.err_ << "invalid id: " << args[0] << "\n";
-            }
-            catch (const std::out_of_range&) {
-                ctrl.err_ << "id not found: " << args[0] << "\n";
-            }
+            ctrl.out_ << "Atomaton " << args[0] << " successfully saved\n";
         }
     );
 

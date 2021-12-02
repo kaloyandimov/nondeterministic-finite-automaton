@@ -9,13 +9,15 @@
 #define Controller_hpp
 
 #include <filesystem>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
 #include "Automaton.hpp"
 #include "Command.hpp"
+#include "CommandNotFoundException.hpp"
+#include "InvalidArgumentCountException.hpp"
 #include "Parser.hpp"
 
 class Controller {
@@ -40,7 +42,7 @@ class Controller {
     std::ostream& err_;
     
     bool basic(const std::string&) const;
-    Command find(const Parser&);
+    Command get_command(const Parser&);
     
     static std::vector<Command> commands;
     static bool init;

@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+#include "InvalidArgumentCountException.hpp"
+
 class Controller;
 
 using ulong = unsigned long;
@@ -32,10 +34,10 @@ class Command {
     
     bool valid() const;
     std::string title() const;
-    std::string execute(Controller&, const std::vector<std::string>&) const;
+    void execute(Controller&, const std::vector<std::string>&) const;
     
     operator bool() const;
-    std::string operator()(Controller&, const std::vector<std::string>&) const;
+    void operator()(Controller&, const std::vector<std::string>&) const;
     
     friend std::ostream& operator<<(std::ostream&, const Command&);
    

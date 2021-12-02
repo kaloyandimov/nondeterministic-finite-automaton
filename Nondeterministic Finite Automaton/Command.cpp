@@ -34,26 +34,24 @@ std::string Command::title() const {
     return name_ + (arg_count_ == 0 ? "" : " " + args_);
 }
 
-std::string Command::execute(Controller& ctrl, const std::vector<std::string>& args) const {
-    if (args.size() == arg_count_) {
-        function_(ctrl, args); return {};
+void Command::execute(Controller& ctrl, const std::vector<std::string>& args) const {
+    if (args.size() < arg_count_) {
+        throw InvalidArgumentCountException{"Too few arguments"};
     }
     
-    std::string message;
-    message.append("too ");
-    message.append(args.size() > arg_count_ ? "many" : "few");
-    message.append(" arguments: needed ");
-    message.append(std::to_string(arg_count_) + "\n");
+    if (args.size() > arg_count_) {
+        throw InvalidArgumentCountException{"Too many arguments"};
+    }
     
-    return message;
+    function_(ctrl, args);
 }
 
 Command::operator bool() const {
     return valid();
 }
 
-std::string Command::operator()(Controller& ctrl, const std::vector<std::string>& args) const {
-    return execute(ctrl, args);
+void Command::operator()(Controller& ctrl, const std::vector<std::string>& args) const {
+    execute(ctrl, args);
 }
 
 std::ostream& operator<<(std::ostream& out, const Command& cmd) {
