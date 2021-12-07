@@ -8,18 +8,21 @@
 #ifndef Parser_hpp
 #define Parser_hpp
 
-#include <stdexcept>
-#include <iterator>
-#include <sstream>
 #include <istream>
+#include <iterator>
+#include <memory>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <memory>
 
-#include "Singleton.hpp"
-#include "Union.hpp"
 #include "Concatenation.hpp"
+#include "InvalidExpressionException.hpp"
+#include "InvalidSymbolException.hpp"
 #include "KleeneClosure.hpp"
+#include "Singleton.hpp"
+#include "UnbalancedBracketsException.hpp"
+#include "Union.hpp"
 
 bool is_in_alphabet(char);
 bool is_operator(char);

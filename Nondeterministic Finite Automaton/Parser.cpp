@@ -80,7 +80,7 @@ int priority(char c) {
 bool only_metasymbols(const std::string& expr) {
     for (char c : expr) {
         if (!is_metasymbol(c)) {
-            throw std::domain_error{"'" + std::string{c} + "' is not a metasymbol"};
+            throw InvalidSymbolException{"'" + std::string{c} + "' is not a metasymbol"};
         }
     }
  
@@ -95,10 +95,10 @@ bool is_balanced(const std::string& expr) {
         
         c == '(' ? count++ : count--;
         
-        if (count < 0) throw std::logic_error("unbalanced ')'");
+        if (count < 0) throw UnbalancedBracketsException{"Unbalanced ')'"};
     }
     
-    if (count != 0) throw std::logic_error("unbalanced '('");
+    if (count != 0) throw UnbalancedBracketsException{"Unbalanced '('"};
  
     return true;
 }
@@ -217,9 +217,9 @@ std::unique_ptr<Expression> create(const std::string& postfix) {
 }
 
 std::unique_ptr<Expression> parse(const std::string& infix) {
-    if (is_valid(infix)) {
-        return create(shunting_yard(expand(infix)));
+    if (!is_valid(infix)) {
+        throw InvalidExpressionException("Invalid expression");
     }
     
-    return {};
+    return create(shunting_yard(expand(infix)));
 }

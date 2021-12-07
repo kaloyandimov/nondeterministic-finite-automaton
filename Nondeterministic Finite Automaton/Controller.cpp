@@ -48,6 +48,15 @@ void Controller::run() {
         catch (const InvalidArgumentCountException& e) {
             err_ << e.what() << "\n";
         }
+        catch (const InvalidSymbolException& e) {
+            err_ << e.what() << "\n";
+        }
+        catch (const UnbalancedBracketsException& e) {
+            err_ << e.what() << "\n";
+        }
+        catch (const InvalidExpressionException& e) {
+            err_ << e.what() << "\n";
+        }
         catch (const std::invalid_argument& e) {
             err_ << "Invalid ID\n";
         }

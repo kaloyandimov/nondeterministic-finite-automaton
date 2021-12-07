@@ -18,7 +18,9 @@
 #include "Command.hpp"
 #include "CommandNotFoundException.hpp"
 #include "InvalidArgumentCountException.hpp"
+#include "InvalidExpressionException.hpp"
 #include "Parser.hpp"
+#include "UnbalancedBracketsException.hpp"
 
 class Controller {
  public:
