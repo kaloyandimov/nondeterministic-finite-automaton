@@ -12,12 +12,13 @@
 #include <iostream>
 #include <iterator>
 #include <optional>
-#include <string>
-#include <vector>
 #include <stack>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-#include "Transition.hpp"
 #include "State.hpp"
+#include "Transition.hpp"
 
 class Automaton {
  public:
@@ -36,7 +37,6 @@ class Automaton {
     bool deterministic() const;
     bool recognises(const std::string&) const;
     
-    ID max_state_id() const;
     ulong transition_count() const;
     
     void normalise();
@@ -52,6 +52,9 @@ class Automaton {
     std::vector<State> states_;
     ID initial_state_;
     ID id_;
+    
+    ID max_state_id() const;
+    std::unordered_map<ID, ID> get_updated_ids() const;
     
     bool recognises_util(const std::string&, ID, ulong) const;
 };

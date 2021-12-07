@@ -92,45 +92,52 @@ ulong Automaton::transition_count() const {
     return count;
 }
 
-void Automaton::normalise() {
-    std::vector<std::optional<ID>> new_ids(max_state_id() + 1);
+std::unordered_map<ID, ID> Automaton::get_updated_ids() const {
+    std::unordered_map<ID, ID> ids;
     std::stack<ID> not_visited;
-    ulong i{0};
+    ID i{0};
     
-    new_ids[initial_state_] = i++;
+    ids.reserve(max_state_id() + 1);
+    ids[initial_state_] = i++;
     not_visited.push(initial_state_);
     
     while (!not_visited.empty()) {
         ID curr{not_visited.top()};
         not_visited.pop();
         
-        for (const Transition& x: states_[curr].transitions()) {
-            if (!new_ids[x.endpoint()]) {
-                new_ids[x.endpoint()] = i++;
-                not_visited.push(x.endpoint());
+        for (const Transition& transition: states_[ids[curr]].transitions()) {
+            if (!ids.contains(transition.endpoint())) {
+                ids[transition.endpoint()] = i++;
+                not_visited.push(transition.endpoint());
             }
         }
     }
+    
+    return ids;
+}
 
-    initial_state_ = new_ids[initial_state_].value();
+void Automaton::normalise() {
+    std::unordered_map<ID, ID> ids = get_updated_ids();
+    initial_state_ = ids[initial_state_];
 
     for (State& state : states_) {
-        std::vector<Transition> new_transitions{state.transitions()};
+        state.set_id(ids[state.id()]);
         
-        state.set_id(new_ids[state.id()].value());
+        std::vector<Transition> transitions{state.transitions()};
         
-        for (Transition& x : new_transitions) {
-            x.set_endpoint(new_ids[x.endpoint()].value());
+        for (Transition& transition : transitions) {
+            transition.set_endpoint(ids[transition.endpoint()]);
         }
         
-        new_transitions.erase(
-            std::unique(new_transitions.begin(), new_transitions.end()),
-            new_transitions.end()
+        transitions.erase(
+            std::unique(transitions.begin(),
+                        transitions.end()),
+            transitions.end()
         );
         
-        std::sort(new_transitions.begin(), new_transitions.end());
+        std::sort(transitions.begin(), transitions.end());
         
-        state.set_transitions(new_transitions);
+        state.set_transitions(transitions);
     }
     
     std::sort(states_.begin(), states_.end());
@@ -138,7 +145,7 @@ void Automaton::normalise() {
 
 Automaton Automaton::operator+(const Automaton& other) const {
     ulong lhs_incr{1};
-    ulong rhs_incr{other.states_.size() + lhs_incr};
+    ulong rhs_incr{states_.size() + lhs_incr};
     
     std::vector<State> lhs_states{states_};
     for (State& state : lhs_states) {
@@ -159,11 +166,10 @@ Automaton Automaton::operator+(const Automaton& other) const {
     ID lhs_old_initial{initial_state_ + lhs_incr};
     ID rhs_old_initial{other.initial_state_ + rhs_incr};
     
-    new_states[lhs_old_initial - lhs_incr].set_accepting(false);
-    new_states[rhs_old_initial - rhs_incr].set_accepting(false);
+    new_states[0].set_accepting(false);
+    new_states[states_.size()].set_accepting(false);
     new_initial.add_epsilon_transition(lhs_old_initial);
     new_initial.add_epsilon_transition(rhs_old_initial);
-    
     new_states.insert(new_states.begin(), new_initial);
     
     return Automaton{new_states};
