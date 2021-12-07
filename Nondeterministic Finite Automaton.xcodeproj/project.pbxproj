@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C035C32D275EC7E40008474A /* InvalidExpressionException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C035C32B275EC7E40008474A /* InvalidExpressionException.cpp */; };
+		C081F171275E51AD00C34A9D /* InvalidSymbolException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C081F16F275E51AD00C34A9D /* InvalidSymbolException.cpp */; };
 		C0B6107D27584017003DEF92 /* InvalidArgumentCountException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0B6107B27584017003DEF92 /* InvalidArgumentCountException.cpp */; };
 		C0B6108027584432003DEF92 /* CommandNotFoundException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0B6107E27584432003DEF92 /* CommandNotFoundException.cpp */; };
+		C0D92D3C275E9ACC00356C7A /* UnbalancedBracketsException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0D92D3A275E9ACC00356C7A /* UnbalancedBracketsException.cpp */; };
 		C0E4AAB626A9EFC00043BDE9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AAB526A9EFC00043BDE9 /* main.cpp */; };
 		C0E4AABE26A9F0980043BDE9 /* Transition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AABC26A9F0980043BDE9 /* Transition.cpp */; };
 		C0E4AAC126A9F0AC0043BDE9 /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AABF26A9F0AC0043BDE9 /* State.cpp */; };
@@ -36,10 +39,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C035C32B275EC7E40008474A /* InvalidExpressionException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InvalidExpressionException.cpp; sourceTree = "<group>"; };
+		C035C32C275EC7E40008474A /* InvalidExpressionException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = InvalidExpressionException.hpp; sourceTree = "<group>"; };
+		C081F16F275E51AD00C34A9D /* InvalidSymbolException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InvalidSymbolException.cpp; sourceTree = "<group>"; };
+		C081F170275E51AD00C34A9D /* InvalidSymbolException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = InvalidSymbolException.hpp; sourceTree = "<group>"; };
 		C0B6107B27584017003DEF92 /* InvalidArgumentCountException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InvalidArgumentCountException.cpp; sourceTree = "<group>"; };
 		C0B6107C27584017003DEF92 /* InvalidArgumentCountException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = InvalidArgumentCountException.hpp; sourceTree = "<group>"; };
 		C0B6107E27584432003DEF92 /* CommandNotFoundException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CommandNotFoundException.cpp; sourceTree = "<group>"; };
 		C0B6107F27584432003DEF92 /* CommandNotFoundException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CommandNotFoundException.hpp; sourceTree = "<group>"; };
+		C0D92D3A275E9ACC00356C7A /* UnbalancedBracketsException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnbalancedBracketsException.cpp; sourceTree = "<group>"; };
+		C0D92D3B275E9ACC00356C7A /* UnbalancedBracketsException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UnbalancedBracketsException.hpp; sourceTree = "<group>"; };
 		C0E4AAB226A9EFC00043BDE9 /* Nondeterministic Finite Automaton */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Nondeterministic Finite Automaton"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0E4AAB526A9EFC00043BDE9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C0E4AABC26A9F0980043BDE9 /* Transition.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Transition.cpp; sourceTree = "<group>"; };
@@ -123,6 +132,12 @@
 				C0B6107B27584017003DEF92 /* InvalidArgumentCountException.cpp */,
 				C0B6107F27584432003DEF92 /* CommandNotFoundException.hpp */,
 				C0B6107E27584432003DEF92 /* CommandNotFoundException.cpp */,
+				C081F170275E51AD00C34A9D /* InvalidSymbolException.hpp */,
+				C081F16F275E51AD00C34A9D /* InvalidSymbolException.cpp */,
+				C0D92D3B275E9ACC00356C7A /* UnbalancedBracketsException.hpp */,
+				C0D92D3A275E9ACC00356C7A /* UnbalancedBracketsException.cpp */,
+				C035C32C275EC7E40008474A /* InvalidExpressionException.hpp */,
+				C035C32B275EC7E40008474A /* InvalidExpressionException.cpp */,
 			);
 			path = "Nondeterministic Finite Automaton";
 			sourceTree = "<group>";
@@ -183,6 +198,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C081F171275E51AD00C34A9D /* InvalidSymbolException.cpp in Sources */,
 				C0E4AAD026A9F12B0043BDE9 /* Concatenation.cpp in Sources */,
 				C0B6107D27584017003DEF92 /* InvalidArgumentCountException.cpp in Sources */,
 				C0E4AABE26A9F0980043BDE9 /* Transition.cpp in Sources */,
@@ -193,6 +209,8 @@
 				C0E4AADF26A9F2050043BDE9 /* Parser.cpp in Sources */,
 				C0E4AACA26A9F0F60043BDE9 /* Singleton.cpp in Sources */,
 				C0E4AAE226A9F2360043BDE9 /* Controller.cpp in Sources */,
+				C0D92D3C275E9ACC00356C7A /* UnbalancedBracketsException.cpp in Sources */,
+				C035C32D275EC7E40008474A /* InvalidExpressionException.cpp in Sources */,
 				C0E4AAD326A9F1410043BDE9 /* KleeneClosure.cpp in Sources */,
 				C0E4AAC726A9F0DD0043BDE9 /* Expression.cpp in Sources */,
 				C0E4AAC126A9F0AC0043BDE9 /* State.cpp in Sources */,
