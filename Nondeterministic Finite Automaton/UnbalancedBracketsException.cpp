@@ -8,8 +8,4 @@
 #include "UnbalancedBracketsException.hpp"
 
 UnbalancedBracketsException::UnbalancedBracketsException(const std::string& what_arg):
-    std::logic_error{what_arg} {}
-
-char const* UnbalancedBracketsException::what() const noexcept {
-    return std::logic_error::what();
-}
+    CustomException{what_arg} {}

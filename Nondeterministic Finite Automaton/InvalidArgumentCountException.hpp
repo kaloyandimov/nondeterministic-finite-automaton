@@ -8,13 +8,11 @@
 #ifndef InvalidArgumentCountException_hpp
 #define InvalidArgumentCountException_hpp
 
-#include <stdexcept>
+#include "CustomException.hpp"
 
-class InvalidArgumentCountException: std::logic_error {
+class InvalidArgumentCountException: CustomException {
  public:
     InvalidArgumentCountException(const std::string& what_arg);
-    
-    char const* what() const noexcept override;
 };
 
 #endif /* InvalidArgumentCountException_hpp */

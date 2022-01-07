@@ -8,13 +8,11 @@
 #ifndef UnbalancedBracketsException_hpp
 #define UnbalancedBracketsException_hpp
 
-#include <stdexcept>
+#include "CustomException.hpp"
 
-class UnbalancedBracketsException: std::logic_error {
+class UnbalancedBracketsException: CustomException {
  public:
     UnbalancedBracketsException(const std::string& what_arg);
-    
-    char const* what() const noexcept override;
 };
 
 #endif /* UnbalancedBracketsException_hpp */

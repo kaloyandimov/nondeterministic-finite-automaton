@@ -8,13 +8,11 @@
 #ifndef CommandNotFoundException_hpp
 #define CommandNotFoundException_hpp
 
-#include <stdexcept>
+#include "CustomException.hpp"
 
-class CommandNotFoundException: std::logic_error {
+class CommandNotFoundException: CustomException {
  public:
     CommandNotFoundException(const std::string& what_arg);
-    
-    char const* what() const noexcept override;
 };
 
 #endif /* CommandNotFoundException_hpp */

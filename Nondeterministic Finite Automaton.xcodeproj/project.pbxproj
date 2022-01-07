@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C0274EC22788A1600065D7A7 /* CustomException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0274EC02788A1600065D7A7 /* CustomException.cpp */; };
 		C035C32D275EC7E40008474A /* InvalidExpressionException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C035C32B275EC7E40008474A /* InvalidExpressionException.cpp */; };
 		C081F171275E51AD00C34A9D /* InvalidSymbolException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C081F16F275E51AD00C34A9D /* InvalidSymbolException.cpp */; };
 		C0B6107D27584017003DEF92 /* InvalidArgumentCountException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0B6107B27584017003DEF92 /* InvalidArgumentCountException.cpp */; };
@@ -39,6 +40,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C0274EC02788A1600065D7A7 /* CustomException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CustomException.cpp; sourceTree = "<group>"; };
+		C0274EC12788A1600065D7A7 /* CustomException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CustomException.hpp; sourceTree = "<group>"; };
 		C035C32B275EC7E40008474A /* InvalidExpressionException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InvalidExpressionException.cpp; sourceTree = "<group>"; };
 		C035C32C275EC7E40008474A /* InvalidExpressionException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = InvalidExpressionException.hpp; sourceTree = "<group>"; };
 		C081F16F275E51AD00C34A9D /* InvalidSymbolException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InvalidSymbolException.cpp; sourceTree = "<group>"; };
@@ -128,6 +131,8 @@
 				C0E4AAE126A9F2360043BDE9 /* Controller.hpp */,
 				C0E4AAE026A9F2360043BDE9 /* Controller.cpp */,
 				C0E4AAB526A9EFC00043BDE9 /* main.cpp */,
+				C0274EC12788A1600065D7A7 /* CustomException.hpp */,
+				C0274EC02788A1600065D7A7 /* CustomException.cpp */,
 				C0B6107C27584017003DEF92 /* InvalidArgumentCountException.hpp */,
 				C0B6107B27584017003DEF92 /* InvalidArgumentCountException.cpp */,
 				C0B6107F27584432003DEF92 /* CommandNotFoundException.hpp */,
@@ -200,6 +205,7 @@
 			files = (
 				C081F171275E51AD00C34A9D /* InvalidSymbolException.cpp in Sources */,
 				C0E4AAD026A9F12B0043BDE9 /* Concatenation.cpp in Sources */,
+				C0274EC22788A1600065D7A7 /* CustomException.cpp in Sources */,
 				C0B6107D27584017003DEF92 /* InvalidArgumentCountException.cpp in Sources */,
 				C0E4AABE26A9F0980043BDE9 /* Transition.cpp in Sources */,
 				C0E4AAB626A9EFC00043BDE9 /* main.cpp in Sources */,

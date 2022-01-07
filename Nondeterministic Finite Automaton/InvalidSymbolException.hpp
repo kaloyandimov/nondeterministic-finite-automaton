@@ -8,13 +8,11 @@
 #ifndef InvalidSymbolException_hpp
 #define InvalidSymbolException_hpp
 
-#include <stdexcept>
+#include "CustomException.hpp"
 
-class InvalidSymbolException: std::logic_error {
+class InvalidSymbolException: CustomException {
  public:
     InvalidSymbolException(const std::string& what_arg);
-
-    char const* what() const noexcept override;
 };
 
 #endif /* InvalidSymbolException_hpp */

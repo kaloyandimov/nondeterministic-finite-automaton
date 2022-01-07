@@ -8,13 +8,11 @@
 #ifndef InvalidExpressionException_hpp
 #define InvalidExpressionException_hpp
 
-#include <stdexcept>
+#include "CustomException.hpp"
 
-class InvalidExpressionException: std::logic_error {
+class InvalidExpressionException: CustomException {
  public:
     InvalidExpressionException(const std::string& what_arg);
-    
-    char const* what() const noexcept override;
 };
 
 #endif /* InvalidExpressionException_hpp */
