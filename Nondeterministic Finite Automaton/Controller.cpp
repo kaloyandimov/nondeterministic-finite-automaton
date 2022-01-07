@@ -42,19 +42,7 @@ void Controller::run() {
         try {
             get_command(input)(*this, input.parsed_args());
         }
-        catch (const CommandNotFoundException& e) {
-            err_ << e.what() << "\n";
-        }
-        catch (const InvalidArgumentCountException& e) {
-            err_ << e.what() << "\n";
-        }
-        catch (const InvalidSymbolException& e) {
-            err_ << e.what() << "\n";
-        }
-        catch (const UnbalancedBracketsException& e) {
-            err_ << e.what() << "\n";
-        }
-        catch (const InvalidExpressionException& e) {
+        catch (const CustomException& e) {
             err_ << e.what() << "\n";
         }
         catch (const std::invalid_argument& e) {

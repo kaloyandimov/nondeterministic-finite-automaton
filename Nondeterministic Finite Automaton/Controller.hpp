@@ -17,6 +17,7 @@
 #include "Automaton.hpp"
 #include "Command.hpp"
 #include "CommandNotFoundException.hpp"
+#include "CustomException.hpp"
 #include "InvalidArgumentCountException.hpp"
 #include "InvalidExpressionException.hpp"
 #include "Parser.hpp"
