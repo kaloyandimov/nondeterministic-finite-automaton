@@ -10,7 +10,7 @@
 
 #include "CustomException.hpp"
 
-class CommandNotFoundException: CustomException {
+class CommandNotFoundException: public CustomException {
  public:
     CommandNotFoundException(const std::string& what_arg);
 };

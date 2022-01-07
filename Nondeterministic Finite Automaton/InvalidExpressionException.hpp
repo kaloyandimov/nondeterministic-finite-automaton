@@ -10,7 +10,7 @@
 
 #include "CustomException.hpp"
 
-class InvalidExpressionException: CustomException {
+class InvalidExpressionException: public CustomException {
  public:
     InvalidExpressionException(const std::string& what_arg);
 };

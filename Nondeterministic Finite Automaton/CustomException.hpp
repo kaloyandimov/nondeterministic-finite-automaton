@@ -10,7 +10,7 @@
 
 #include <stdexcept>
 
-class CustomException: std::logic_error {
+class CustomException: public std::logic_error {
  public:
     CustomException(const std::string& what_arg);
     

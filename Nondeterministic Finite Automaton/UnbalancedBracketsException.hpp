@@ -10,7 +10,7 @@
 
 #include "CustomException.hpp"
 
-class UnbalancedBracketsException: CustomException {
+class UnbalancedBracketsException: public CustomException {
  public:
     UnbalancedBracketsException(const std::string& what_arg);
 };

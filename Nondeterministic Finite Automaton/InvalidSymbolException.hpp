@@ -10,7 +10,7 @@
 
 #include "CustomException.hpp"
 
-class InvalidSymbolException: CustomException {
+class InvalidSymbolException: public CustomException {
  public:
     InvalidSymbolException(const std::string& what_arg);
 };
