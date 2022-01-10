@@ -116,6 +116,68 @@ std::unordered_map<ID, ID> Automaton::get_updated_ids() const {
     return ids;
 }
 
+void Automaton::remove_epsilons_util(ID start, ID curr, std::vector<bool>& visited, bool& accepting) {
+    if (visited[curr]) {
+        return;
+    }
+    
+    visited[curr] = true;
+    
+    if (states_[curr].accepting()) {
+        accepting = true;
+    }
+    
+    for (auto transitions{states_[curr].transitions()}; const Transition& transition: transitions) {
+        if (transition.epsilon()) {
+            remove_epsilons_util(start, transition.endpoint(), visited, accepting);
+        }
+        else {
+            states_[start].add_transition(transition);
+        }
+    }
+}
+
+void Automaton::remove_epsilons() {
+    for (State& state : states_) {
+        std::vector<bool> visited(states_.size());
+        bool accepting{false};
+        
+        remove_epsilons_util(state.id(), state.id(), visited, accepting);
+        state.set_accepting(accepting);
+        
+        std::vector<Transition> transitions{state.transitions()};
+        
+        auto pos{std::remove_if(transitions.begin(), transitions.end(), [](const Transition& transition) {
+            return transition.epsilon();
+        })};
+        
+        transitions.erase(pos, transitions.end());
+        state.set_transitions(transitions);
+    }
+}
+
+void Automaton::depth_first_search(std::vector<bool>& reached, ID curr) const {
+    reached[curr] = true;
+
+    for (const Transition& transition: states_[curr].transitions()) {
+        if (!reached[transition.endpoint()]) {
+            depth_first_search(reached, transition.endpoint());
+        }
+    }
+}
+
+void Automaton::remove_unreachable_states() {
+    std::vector<bool> reached(states_.size());
+    
+    depth_first_search(reached);
+    
+    auto pos{std::remove_if(states_.begin(), states_.end(), [&reached](const State& state) {
+        return reached[state.id()] == false;
+    })};
+    
+    states_.erase(pos, states_.end());
+}
+
 void Automaton::normalise() {
     std::unordered_map<ID, ID> ids = get_updated_ids();
     initial_state_ = ids[initial_state_];
@@ -141,6 +203,92 @@ void Automaton::normalise() {
     }
     
     std::sort(states_.begin(), states_.end());
+}
+
+void get_power_set_util(ulong i, ulong n, std::set<ID>& set, std::vector<std::set<ID>>& power_set) {
+    if (i == n) {
+        power_set.push_back(set); return;
+    }
+    
+    set.insert(i);
+    get_power_set_util(i + 1, n, set, power_set);
+    set.erase(i);
+    get_power_set_util(i + 1, n, set, power_set);
+}
+
+std::vector<std::set<ID>> get_power_set(ulong n) {
+    std::vector<std::set<ID>> power_set;
+    std::set<ID> set;
+    
+    get_power_set_util(0, n, set, power_set);
+    
+    return power_set;
+}
+
+std::set<char> Automaton::get_alphabet(const std::vector<State>& states) const {
+    std::set<char> alphabet;
+    
+    for (const State& state : states) {
+        for (const Transition& transition : state.transitions()) {
+            alphabet.insert(transition.symbol());
+        }
+    }
+    
+    return alphabet;
+}
+
+std::map<std::set<ID>, State> Automaton::get_determined_states(const std::vector<std::set<ID>>& power_set) const {
+    std::map<std::set<ID>, State> determined_states;
+    
+    for (const std::set<ID>& set : power_set) {
+        bool accepting{std::any_of(set.begin(), set.end(), [this](ID id) {
+            return states_[id].accepting();
+        })};
+        
+        determined_states[set] = State{accepting, determined_states.size()};
+    }
+    
+    return determined_states;
+}
+
+void Automaton::convert() {
+    remove_epsilons();
+    remove_unreachable_states();
+    normalise();
+    
+    if (deterministic()) {
+        return;
+    }
+    
+    std::vector<std::set<ID>> power_set = get_power_set(states_.size());
+    std::map<std::set<ID>, State> determined_states = get_determined_states(power_set);
+    
+    for (auto& set : determined_states) {
+        for (char symbol : get_alphabet(states_)) {
+            std::set<ID> neighbours;
+
+            for (ID id : set.first) {
+                for (const Transition& transition : states_[id].transitions()) {
+                    if (transition.symbol() == symbol) {
+                        neighbours.insert(transition.endpoint());
+                    }
+                }
+            }
+
+            set.second.add_transition(determined_states[neighbours].id(), symbol);
+        }
+    }
+    
+    std::vector<State> new_states;
+    new_states.reserve(determined_states.size());
+    
+    for (auto&& pair : determined_states) {
+        new_states.push_back(std::move(pair.second));
+    }
+    
+    states_ = std::move(new_states);
+    remove_unreachable_states();
+    normalise();
 }
 
 Automaton Automaton::operator+(const Automaton& other) const {

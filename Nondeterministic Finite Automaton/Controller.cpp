@@ -149,6 +149,18 @@ bool Controller::init_commands() {
             ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
         }
     );
+    
+    register_command("convert", "<id>", "convert NFA to DFA", 1,
+        [](Controller& ctrl, const std::vector<std::string>& args) {
+            Automaton automaton{ctrl.automata_.at(std::stoull(args[0]))};
+            automaton.convert();
+            automaton.set_id(ctrl.automata_.size());
+        
+            ctrl.automata_.push_back(std::move(automaton));
+        
+            ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
+        }
+    );
 
     register_command("open", "<filename>", "open file", 1,
         [](Controller& ctrl, const std::vector<std::string>& args) {
