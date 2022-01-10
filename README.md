@@ -25,10 +25,10 @@ Number of transitions (transition_count)
 ### :hash: Next \<transition_count\> lines 
 Source state (id1), symbol \(c\) and destination state (id2)
 ```
-<id1> <c> <id2>
-<id1> <c> <id2>
+<id11> <c1> <id12>
+<id21> <c2> <id22>
+<id31> <c2> <id32>
 ...
-<id1> <c> <id2>
 ```
 ## :keyboard: The following commands are supported:
 | Name | Params | Usage |
@@ -42,6 +42,7 @@ Source state (id1), symbol \(c\) and destination state (id2)
 | union | \<id1\> \<id2\> | find the union of two automata |
 | concat | \<id1\> \<id2\> | find the concatenation of two automata |
 | kleene | \<id\> | find the kleene closure of automaton |
+| convert | \<id\> | convert NFA to DFA |
 | open | \<filename\> | open file |
 | save | --- | save data to current file |
 | saveas | \<filename\> | save data to file |
