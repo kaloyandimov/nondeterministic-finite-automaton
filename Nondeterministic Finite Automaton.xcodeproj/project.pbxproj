@@ -89,6 +89,68 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C0C13FD7278CE138002120F6 /* Exception */ = {
+			isa = PBXGroup;
+			children = (
+				C0274EC12788A1600065D7A7 /* CustomException.hpp */,
+				C0274EC02788A1600065D7A7 /* CustomException.cpp */,
+				C0B6107C27584017003DEF92 /* InvalidArgumentCountException.hpp */,
+				C0B6107B27584017003DEF92 /* InvalidArgumentCountException.cpp */,
+				C0B6107F27584432003DEF92 /* CommandNotFoundException.hpp */,
+				C0B6107E27584432003DEF92 /* CommandNotFoundException.cpp */,
+				C081F170275E51AD00C34A9D /* InvalidSymbolException.hpp */,
+				C081F16F275E51AD00C34A9D /* InvalidSymbolException.cpp */,
+				C0D92D3B275E9ACC00356C7A /* UnbalancedBracketsException.hpp */,
+				C0D92D3A275E9ACC00356C7A /* UnbalancedBracketsException.cpp */,
+				C035C32C275EC7E40008474A /* InvalidExpressionException.hpp */,
+				C035C32B275EC7E40008474A /* InvalidExpressionException.cpp */,
+			);
+			path = Exception;
+			sourceTree = "<group>";
+		};
+		C0C13FD8278CE16B002120F6 /* Expression */ = {
+			isa = PBXGroup;
+			children = (
+				C0E4AAC626A9F0DD0043BDE9 /* Expression.hpp */,
+				C0E4AAC526A9F0DD0043BDE9 /* Expression.cpp */,
+				C0E4AAC926A9F0F60043BDE9 /* Singleton.hpp */,
+				C0E4AAC826A9F0F60043BDE9 /* Singleton.cpp */,
+				C0E4AACC26A9F1150043BDE9 /* Union.hpp */,
+				C0E4AACB26A9F1150043BDE9 /* Union.cpp */,
+				C0E4AACF26A9F12B0043BDE9 /* Concatenation.hpp */,
+				C0E4AACE26A9F12B0043BDE9 /* Concatenation.cpp */,
+				C0E4AAD226A9F1410043BDE9 /* KleeneClosure.hpp */,
+				C0E4AAD126A9F1410043BDE9 /* KleeneClosure.cpp */,
+			);
+			path = Expression;
+			sourceTree = "<group>";
+		};
+		C0C13FDA278CE442002120F6 /* Automaton */ = {
+			isa = PBXGroup;
+			children = (
+				C0E4AABD26A9F0980043BDE9 /* Transition.hpp */,
+				C0E4AABC26A9F0980043BDE9 /* Transition.cpp */,
+				C0E4AAC026A9F0AC0043BDE9 /* State.hpp */,
+				C0E4AABF26A9F0AC0043BDE9 /* State.cpp */,
+				C0E4AAC326A9F0C60043BDE9 /* Automaton.hpp */,
+				C0E4AAC226A9F0C60043BDE9 /* Automaton.cpp */,
+			);
+			path = Automaton;
+			sourceTree = "<group>";
+		};
+		C0C13FDB278CE4A0002120F6 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				C0E4AADB26A9F1F90043BDE9 /* Command.hpp */,
+				C0E4AADA26A9F1F90043BDE9 /* Command.cpp */,
+				C0E4AADE26A9F2050043BDE9 /* Parser.hpp */,
+				C0E4AADD26A9F2050043BDE9 /* Parser.cpp */,
+				C0E4AAE126A9F2360043BDE9 /* Controller.hpp */,
+				C0E4AAE026A9F2360043BDE9 /* Controller.cpp */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
 		C0E4AAA926A9EFC00043BDE9 = {
 			isa = PBXGroup;
 			children = (
@@ -108,41 +170,11 @@
 		C0E4AAB426A9EFC00043BDE9 /* Nondeterministic Finite Automaton */ = {
 			isa = PBXGroup;
 			children = (
-				C0E4AABD26A9F0980043BDE9 /* Transition.hpp */,
-				C0E4AABC26A9F0980043BDE9 /* Transition.cpp */,
-				C0E4AAC026A9F0AC0043BDE9 /* State.hpp */,
-				C0E4AABF26A9F0AC0043BDE9 /* State.cpp */,
-				C0E4AAC326A9F0C60043BDE9 /* Automaton.hpp */,
-				C0E4AAC226A9F0C60043BDE9 /* Automaton.cpp */,
-				C0E4AAC626A9F0DD0043BDE9 /* Expression.hpp */,
-				C0E4AAC526A9F0DD0043BDE9 /* Expression.cpp */,
-				C0E4AAC926A9F0F60043BDE9 /* Singleton.hpp */,
-				C0E4AAC826A9F0F60043BDE9 /* Singleton.cpp */,
-				C0E4AACC26A9F1150043BDE9 /* Union.hpp */,
-				C0E4AACB26A9F1150043BDE9 /* Union.cpp */,
-				C0E4AACF26A9F12B0043BDE9 /* Concatenation.hpp */,
-				C0E4AACE26A9F12B0043BDE9 /* Concatenation.cpp */,
-				C0E4AAD226A9F1410043BDE9 /* KleeneClosure.hpp */,
-				C0E4AAD126A9F1410043BDE9 /* KleeneClosure.cpp */,
-				C0E4AADB26A9F1F90043BDE9 /* Command.hpp */,
-				C0E4AADA26A9F1F90043BDE9 /* Command.cpp */,
-				C0E4AADE26A9F2050043BDE9 /* Parser.hpp */,
-				C0E4AADD26A9F2050043BDE9 /* Parser.cpp */,
-				C0E4AAE126A9F2360043BDE9 /* Controller.hpp */,
-				C0E4AAE026A9F2360043BDE9 /* Controller.cpp */,
+				C0C13FDA278CE442002120F6 /* Automaton */,
+				C0C13FD8278CE16B002120F6 /* Expression */,
+				C0C13FD7278CE138002120F6 /* Exception */,
+				C0C13FDB278CE4A0002120F6 /* Controller */,
 				C0E4AAB526A9EFC00043BDE9 /* main.cpp */,
-				C0274EC12788A1600065D7A7 /* CustomException.hpp */,
-				C0274EC02788A1600065D7A7 /* CustomException.cpp */,
-				C0B6107C27584017003DEF92 /* InvalidArgumentCountException.hpp */,
-				C0B6107B27584017003DEF92 /* InvalidArgumentCountException.cpp */,
-				C0B6107F27584432003DEF92 /* CommandNotFoundException.hpp */,
-				C0B6107E27584432003DEF92 /* CommandNotFoundException.cpp */,
-				C081F170275E51AD00C34A9D /* InvalidSymbolException.hpp */,
-				C081F16F275E51AD00C34A9D /* InvalidSymbolException.cpp */,
-				C0D92D3B275E9ACC00356C7A /* UnbalancedBracketsException.hpp */,
-				C0D92D3A275E9ACC00356C7A /* UnbalancedBracketsException.cpp */,
-				C035C32C275EC7E40008474A /* InvalidExpressionException.hpp */,
-				C035C32B275EC7E40008474A /* InvalidExpressionException.cpp */,
 			);
 			path = "Nondeterministic Finite Automaton";
 			sourceTree = "<group>";
