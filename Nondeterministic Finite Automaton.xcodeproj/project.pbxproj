@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,15 +13,15 @@
 		C0B6107D27584017003DEF92 /* InvalidArgumentCountException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0B6107B27584017003DEF92 /* InvalidArgumentCountException.cpp */; };
 		C0B6108027584432003DEF92 /* CommandNotFoundException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0B6107E27584432003DEF92 /* CommandNotFoundException.cpp */; };
 		C0D92D3C275E9ACC00356C7A /* UnbalancedBracketsException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0D92D3A275E9ACC00356C7A /* UnbalancedBracketsException.cpp */; };
+		C0E19A552C2D68ED00BAB270 /* Atom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E19A532C2D68ED00BAB270 /* Atom.cpp */; };
+		C0E19A582C2DA29000BAB270 /* KleeneStar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E19A562C2DA29000BAB270 /* KleeneStar.cpp */; };
 		C0E4AAB626A9EFC00043BDE9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AAB526A9EFC00043BDE9 /* main.cpp */; };
 		C0E4AABE26A9F0980043BDE9 /* Transition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AABC26A9F0980043BDE9 /* Transition.cpp */; };
 		C0E4AAC126A9F0AC0043BDE9 /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AABF26A9F0AC0043BDE9 /* State.cpp */; };
 		C0E4AAC426A9F0C60043BDE9 /* Automaton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AAC226A9F0C60043BDE9 /* Automaton.cpp */; };
 		C0E4AAC726A9F0DD0043BDE9 /* Expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AAC526A9F0DD0043BDE9 /* Expression.cpp */; };
-		C0E4AACA26A9F0F60043BDE9 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AAC826A9F0F60043BDE9 /* Singleton.cpp */; };
 		C0E4AACD26A9F1150043BDE9 /* Union.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AACB26A9F1150043BDE9 /* Union.cpp */; };
 		C0E4AAD026A9F12B0043BDE9 /* Concatenation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AACE26A9F12B0043BDE9 /* Concatenation.cpp */; };
-		C0E4AAD326A9F1410043BDE9 /* KleeneClosure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AAD126A9F1410043BDE9 /* KleeneClosure.cpp */; };
 		C0E4AADC26A9F1F90043BDE9 /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AADA26A9F1F90043BDE9 /* Command.cpp */; };
 		C0E4AADF26A9F2050043BDE9 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AADD26A9F2050043BDE9 /* Parser.cpp */; };
 		C0E4AAE226A9F2360043BDE9 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E4AAE026A9F2360043BDE9 /* Controller.cpp */; };
@@ -52,6 +52,10 @@
 		C0B6107F27584432003DEF92 /* CommandNotFoundException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CommandNotFoundException.hpp; sourceTree = "<group>"; };
 		C0D92D3A275E9ACC00356C7A /* UnbalancedBracketsException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnbalancedBracketsException.cpp; sourceTree = "<group>"; };
 		C0D92D3B275E9ACC00356C7A /* UnbalancedBracketsException.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UnbalancedBracketsException.hpp; sourceTree = "<group>"; };
+		C0E19A532C2D68ED00BAB270 /* Atom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Atom.cpp; sourceTree = "<group>"; };
+		C0E19A542C2D68ED00BAB270 /* Atom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Atom.hpp; sourceTree = "<group>"; };
+		C0E19A562C2DA29000BAB270 /* KleeneStar.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KleeneStar.cpp; sourceTree = "<group>"; };
+		C0E19A572C2DA29000BAB270 /* KleeneStar.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = KleeneStar.hpp; sourceTree = "<group>"; };
 		C0E4AAB226A9EFC00043BDE9 /* Nondeterministic Finite Automaton */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Nondeterministic Finite Automaton"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0E4AAB526A9EFC00043BDE9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C0E4AABC26A9F0980043BDE9 /* Transition.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Transition.cpp; sourceTree = "<group>"; };
@@ -62,14 +66,10 @@
 		C0E4AAC326A9F0C60043BDE9 /* Automaton.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Automaton.hpp; sourceTree = "<group>"; };
 		C0E4AAC526A9F0DD0043BDE9 /* Expression.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Expression.cpp; sourceTree = "<group>"; };
 		C0E4AAC626A9F0DD0043BDE9 /* Expression.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Expression.hpp; sourceTree = "<group>"; };
-		C0E4AAC826A9F0F60043BDE9 /* Singleton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
-		C0E4AAC926A9F0F60043BDE9 /* Singleton.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Singleton.hpp; sourceTree = "<group>"; };
 		C0E4AACB26A9F1150043BDE9 /* Union.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Union.cpp; sourceTree = "<group>"; };
 		C0E4AACC26A9F1150043BDE9 /* Union.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Union.hpp; sourceTree = "<group>"; };
 		C0E4AACE26A9F12B0043BDE9 /* Concatenation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Concatenation.cpp; sourceTree = "<group>"; };
 		C0E4AACF26A9F12B0043BDE9 /* Concatenation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Concatenation.hpp; sourceTree = "<group>"; };
-		C0E4AAD126A9F1410043BDE9 /* KleeneClosure.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KleeneClosure.cpp; sourceTree = "<group>"; };
-		C0E4AAD226A9F1410043BDE9 /* KleeneClosure.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = KleeneClosure.hpp; sourceTree = "<group>"; };
 		C0E4AADA26A9F1F90043BDE9 /* Command.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Command.cpp; sourceTree = "<group>"; };
 		C0E4AADB26A9F1F90043BDE9 /* Command.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Command.hpp; sourceTree = "<group>"; };
 		C0E4AADD26A9F2050043BDE9 /* Parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
@@ -113,14 +113,14 @@
 			children = (
 				C0E4AAC626A9F0DD0043BDE9 /* Expression.hpp */,
 				C0E4AAC526A9F0DD0043BDE9 /* Expression.cpp */,
-				C0E4AAC926A9F0F60043BDE9 /* Singleton.hpp */,
-				C0E4AAC826A9F0F60043BDE9 /* Singleton.cpp */,
+				C0E19A542C2D68ED00BAB270 /* Atom.hpp */,
+				C0E19A532C2D68ED00BAB270 /* Atom.cpp */,
 				C0E4AACC26A9F1150043BDE9 /* Union.hpp */,
 				C0E4AACB26A9F1150043BDE9 /* Union.cpp */,
 				C0E4AACF26A9F12B0043BDE9 /* Concatenation.hpp */,
 				C0E4AACE26A9F12B0043BDE9 /* Concatenation.cpp */,
-				C0E4AAD226A9F1410043BDE9 /* KleeneClosure.hpp */,
-				C0E4AAD126A9F1410043BDE9 /* KleeneClosure.cpp */,
+				C0E19A572C2DA29000BAB270 /* KleeneStar.hpp */,
+				C0E19A562C2DA29000BAB270 /* KleeneStar.cpp */,
 			);
 			path = Expression;
 			sourceTree = "<group>";
@@ -205,7 +205,8 @@
 		C0E4AAAA26A9EFC00043BDE9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1300;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					C0E4AAB126A9EFC00043BDE9 = {
 						CreatedOnToolsVersion = 12.5.1;
@@ -245,12 +246,12 @@
 				C0E4AAC426A9F0C60043BDE9 /* Automaton.cpp in Sources */,
 				C0E4AACD26A9F1150043BDE9 /* Union.cpp in Sources */,
 				C0E4AADF26A9F2050043BDE9 /* Parser.cpp in Sources */,
-				C0E4AACA26A9F0F60043BDE9 /* Singleton.cpp in Sources */,
+				C0E19A552C2D68ED00BAB270 /* Atom.cpp in Sources */,
 				C0E4AAE226A9F2360043BDE9 /* Controller.cpp in Sources */,
 				C0D92D3C275E9ACC00356C7A /* UnbalancedBracketsException.cpp in Sources */,
 				C035C32D275EC7E40008474A /* InvalidExpressionException.cpp in Sources */,
-				C0E4AAD326A9F1410043BDE9 /* KleeneClosure.cpp in Sources */,
 				C0E4AAC726A9F0DD0043BDE9 /* Expression.cpp in Sources */,
+				C0E19A582C2DA29000BAB270 /* KleeneStar.cpp in Sources */,
 				C0E4AAC126A9F0AC0043BDE9 /* State.cpp in Sources */,
 				C0E4AADC26A9F1F90043BDE9 /* Command.cpp in Sources */,
 			);
@@ -263,6 +264,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -296,9 +298,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -332,6 +336,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -365,9 +370,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -396,6 +403,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 2F3A9Y3XXN;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -407,6 +415,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 2F3A9Y3XXN;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

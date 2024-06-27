@@ -80,7 +80,7 @@ int priority(char c) {
 bool only_metasymbols(const std::string& expr) {
     for (char c : expr) {
         if (!is_metasymbol(c)) {
-            throw InvalidSymbolException{"'" + std::string{c} + "' is not a metasymbol"};
+            throw InvalidSymbolException{"'" + std::string{1, c} + "' is not a metasymbol"};
         }
     }
  
@@ -180,46 +180,4 @@ std::string shunting_yard(const std::string& infix) {
     }
     
     return postfix;
-}
-
-std::unique_ptr<Expression> create(const std::string& postfix) {
-    std::stack<std::unique_ptr<Expression>> expressions;
-    
-    for (char c : postfix) {
-        if (is_in_alphabet(c)) {
-            expressions.push(std::make_unique<Singleton>(c));
-        }
-        else if (c == '*') {
-            std::unique_ptr<Expression> expr{std::move(expressions.top())};
-            expressions.pop();
-            
-            expressions.push(std::make_unique<KleeneClosure>(*expr));
-        }
-        else if (c == '.') {
-            std::unique_ptr<Expression> rhs{std::move(expressions.top())};
-            expressions.pop();
-            std::unique_ptr<Expression> lhs{std::move(expressions.top())};
-            expressions.pop();
-            
-            expressions.push(std::make_unique<Concatenation>(*lhs, *rhs));
-        }
-        else if (c == '+') {
-            std::unique_ptr<Expression> rhs{std::move(expressions.top())};
-            expressions.pop();
-            std::unique_ptr<Expression> lhs{std::move(expressions.top())};
-            expressions.pop();
-            
-            expressions.push(std::make_unique<Union>(*lhs, *rhs));
-        }
-    }
-    
-    return std::move(expressions.top());
-}
-
-std::unique_ptr<Expression> parse(const std::string& infix) {
-    if (!is_valid(infix)) {
-        throw InvalidExpressionException("Invalid expression");
-    }
-    
-    return create(shunting_yard(expand(infix)));
 }

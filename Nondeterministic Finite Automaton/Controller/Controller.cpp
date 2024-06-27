@@ -100,7 +100,7 @@ bool Controller::init_commands() {
     
     register_command("reg", "<regex>", "create automaton from regular expression", 1,
         [](Controller& ctrl, const std::vector<std::string>& args) {
-            Automaton automaton{parse(args[0])->evaluate()};
+            Automaton automaton{parse<Automaton>(args[0])->evaluate()};
             automaton.set_id(ctrl.automata_.size());
 
             ctrl.automata_.push_back(std::move(automaton));

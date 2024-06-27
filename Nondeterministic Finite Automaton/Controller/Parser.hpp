@@ -12,15 +12,17 @@
 #include <iterator>
 #include <memory>
 #include <sstream>
+#include <stack>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
+#include "Atom.hpp"
+#include "Automaton.hpp"
 #include "Concatenation.hpp"
 #include "InvalidExpressionException.hpp"
 #include "InvalidSymbolException.hpp"
-#include "KleeneClosure.hpp"
-#include "Singleton.hpp"
+#include "KleeneStar.hpp"
 #include "UnbalancedBracketsException.hpp"
 #include "Union.hpp"
 
@@ -40,8 +42,12 @@ bool is_valid(const std::string&);
 
 std::string expand(const std::string&);
 std::string shunting_yard(const std::string&);
-std::unique_ptr<Expression> create(const std::string&);
-std::unique_ptr<Expression> parse(const std::string&);
+
+template<typename T>
+std::unique_ptr<Expression<T>> create(const std::string&);
+
+template<typename T>
+std::unique_ptr<Expression<T>> parse(const std::string&);
 
 class Parser {
  public:
@@ -60,5 +66,49 @@ class Parser {
     
     void parse(const std::string&);
 };
+
+template<typename T>
+std::unique_ptr<Expression<T>> create(const std::string& postfix) {
+    std::stack<std::unique_ptr<Expression<T>>> expressions;
+    
+    for (char c : postfix) {
+        if (is_in_alphabet(c)) {
+            expressions.push(std::make_unique<Atom<T>>(c));
+        }
+        else if (c == '*') {
+            std::unique_ptr<Expression<T>> expr{std::move(expressions.top())};
+            expressions.pop();
+            
+            expressions.push(std::make_unique<KleeneStar<T>>(*expr));
+        }
+        else if (c == '.') {
+            std::unique_ptr<Expression<T>> rhs{std::move(expressions.top())};
+            expressions.pop();
+            std::unique_ptr<Expression<T>> lhs{std::move(expressions.top())};
+            expressions.pop();
+            
+            expressions.push(std::make_unique<Concatenation<T>>(*lhs, *rhs));
+        }
+        else if (c == '+') {
+            std::unique_ptr<Expression<T>> rhs{std::move(expressions.top())};
+            expressions.pop();
+            std::unique_ptr<Expression<T>> lhs{std::move(expressions.top())};
+            expressions.pop();
+            
+            expressions.push(std::make_unique<Union<T>>(*lhs, *rhs));
+        }
+    }
+    
+    return std::move(expressions.top());
+}
+
+template<typename T>
+std::unique_ptr<Expression<T>> parse(const std::string& infix) {
+    if (!is_valid(infix)) {
+        throw InvalidExpressionException("Invalid expression");
+    }
+    
+    return create<T>(shunting_yard(expand(infix)));
+}
 
 #endif /* Parser_hpp */
