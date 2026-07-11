@@ -26,6 +26,11 @@ void Controller::run() {
         out_ << "> ";
         in_ >> input;
 
+        if (!in_) {
+            out_ << std::endl;
+            break;
+        }
+
         if (!path_.has_filename() && !basic(input.parsed_name())) {
             err_ << "First open a file\n";
             continue;
@@ -148,7 +153,7 @@ bool Controller::init_commands() {
                          std::ifstream file{ctrl.path_ = args[0]};
 
                          if (!file) {
-                             ctrl.err_ << "New file created\n";
+                             ctrl.out_ << "New file opened\n";
                              return;
                          }
 
@@ -160,7 +165,7 @@ bool Controller::init_commands() {
 
                              while (file >> temp) {
                                  temp.set_id(ctrl.automata_.size());
-                                 ctrl.automata_.push_back(temp);
+                                 ctrl.automata_.push_back(std::move(temp));
                                  count++;
                              }
                          }
@@ -173,7 +178,7 @@ bool Controller::init_commands() {
                          std::ofstream file{ctrl.path_};
 
                          if (!file) {
-                             ctrl.err_ << "File could not be opened\n";
+                             ctrl.err_ << "File could not be saved\n";
                              return;
                          }
 
@@ -189,7 +194,7 @@ bool Controller::init_commands() {
                          std::ofstream file{args[0]};
 
                          if (!file) {
-                             ctrl.err_ << "File could not be opened\n";
+                             ctrl.err_ << "File could not be saved\n";
                              return;
                          }
 
@@ -205,13 +210,13 @@ bool Controller::init_commands() {
                          std::ofstream file{args[1]};
 
                          if (!file) {
-                             ctrl.err_ << "File could not be opened\n";
+                             ctrl.err_ << "File could not be saved\n";
                              return;
                          }
 
                          file << ctrl.automata_.at(std::stoull(args[0]));
 
-                         ctrl.out_ << "Atomaton " << args[0] << " successfully saved\n";
+                         ctrl.out_ << "Automaton " << args[0] << " successfully saved\n";
                      });
 
     register_command("close", "", "close current file", 0,

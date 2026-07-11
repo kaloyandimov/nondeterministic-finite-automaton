@@ -50,15 +50,12 @@ class Automaton {
     std::vector<State> states_;
     ID initial_state_;
     ID id_;
-
-    ID max_state_id() const;
+    
     void depth_first_search(std::vector<bool>&, ID = 0) const;
 
     std::unordered_map<ID, ID> get_updated_ids() const;
     std::set<char> get_alphabet(const std::vector<State>&) const;
-    std::map<std::set<ID>, State> get_determined_states(const std::vector<std::set<ID>>&) const;
 
-    bool recognises_util(const std::string&, ID, ulong) const;
     void remove_epsilons_util(ID, ID, std::vector<bool>&, bool&);
 };
 

@@ -1,5 +1,8 @@
 #include "automaton/automaton.hpp"
 
+#include <memory>
+#include <queue>
+
 Automaton::Automaton(const std::vector<State>& states, ID initial_state, ID id) : states_{states}, initial_state_{initial_state}, id_{id} {}
 
 Automaton::Automaton(char symbol, ID initial_state, ID id) : initial_state_{initial_state}, id_{id} {
@@ -35,8 +38,11 @@ void Automaton::set_id(ID id) {
 }
 
 bool Automaton::empty() const {
-    return std::none_of(states_.begin(), states_.end(), [](const State& x) {
-        return x.accepting();
+    std::vector<bool> reached(states_.size());
+    depth_first_search(reached, initial_state_);
+
+    return std::none_of(states_.begin(), states_.end(), [&reached](const State& x) {
+        return reached[x.id()] && x.accepting();
     });
 }
 
@@ -46,31 +52,39 @@ bool Automaton::deterministic() const {
     });
 }
 
-bool Automaton::recognises_util(const std::string& word, ID curr, ulong i) const {
-    if (i == word.size()) {
-        return states_[curr].accepting();
-    }
+bool Automaton::recognises(const std::string& word) const {
+    std::set<std::pair<ID, std::size_t>> visited;
+    std::stack<std::pair<ID, std::size_t>> pending;
 
-    for (const Transition& x : states_[curr].transitions()) {
-        if ((x.symbol() == word[i] && recognises_util(word, x.endpoint(), i + 1)) ||
-            (x.epsilon() && recognises_util(word, x.endpoint(), i))) {
+    pending.push({initial_state_, 0});
+
+    while (!pending.empty()) {
+        auto [curr, i] = pending.top();
+        pending.pop();
+
+        if (!visited.insert({curr, i}).second) {
+            continue;
+        }
+
+        if (i == word.size() && states_[curr].accepting()) {
             return true;
+        }
+
+        if (i < word.size() && word[i] == 'E') {
+            pending.push({curr, i + 1});
+        }
+
+        for (const Transition& x : states_[curr].transitions()) {
+            if (x.epsilon()) {
+                pending.push({x.endpoint(), i});
+            }
+            if (i < word.size() && x.symbol() == word[i]) {
+                pending.push({x.endpoint(), i + 1});
+            }
         }
     }
 
     return false;
-}
-
-bool Automaton::recognises(const std::string& word) const {
-    if (word == "E") {
-        return states_[initial_state_].accepting();
-    }
-
-    return recognises_util(word, initial_state_, 0);
-}
-
-ID Automaton::max_state_id() const {
-    return std::max_element(states_.begin(), states_.end())->id();
 }
 
 ulong Automaton::transition_count() const {
@@ -84,11 +98,17 @@ ulong Automaton::transition_count() const {
 }
 
 std::unordered_map<ID, ID> Automaton::get_updated_ids() const {
+    std::unordered_map<ID, ulong> index_of;
+    index_of.reserve(states_.size());
+    for (ulong pos{0}; pos < states_.size(); pos++) {
+        index_of[states_[pos].id()] = pos;
+    }
+
     std::unordered_map<ID, ID> ids;
     std::stack<ID> not_visited;
     ID i{0};
 
-    ids.reserve(max_state_id() + 1);
+    ids.reserve(states_.size());
     ids[initial_state_] = i++;
     not_visited.push(initial_state_);
 
@@ -96,7 +116,7 @@ std::unordered_map<ID, ID> Automaton::get_updated_ids() const {
         ID curr{not_visited.top()};
         not_visited.pop();
 
-        for (const Transition& transition : states_[ids[curr]].transitions()) {
+        for (const Transition& transition : states_[index_of[curr]].transitions()) {
             if (!ids.contains(transition.endpoint())) {
                 ids[transition.endpoint()] = i++;
                 not_visited.push(transition.endpoint());
@@ -194,27 +214,6 @@ void Automaton::normalise() {
     std::sort(states_.begin(), states_.end());
 }
 
-void get_power_set_util(ulong i, ulong n, std::set<ID>& set, std::vector<std::set<ID>>& power_set) {
-    if (i == n) {
-        power_set.push_back(set);
-        return;
-    }
-
-    set.insert(i);
-    get_power_set_util(i + 1, n, set, power_set);
-    set.erase(i);
-    get_power_set_util(i + 1, n, set, power_set);
-}
-
-std::vector<std::set<ID>> get_power_set(ulong n) {
-    std::vector<std::set<ID>> power_set;
-    std::set<ID> set;
-
-    get_power_set_util(0, n, set, power_set);
-
-    return power_set;
-}
-
 std::set<char> Automaton::get_alphabet(const std::vector<State>& states) const {
     std::set<char> alphabet;
 
@@ -227,20 +226,6 @@ std::set<char> Automaton::get_alphabet(const std::vector<State>& states) const {
     return alphabet;
 }
 
-std::map<std::set<ID>, State> Automaton::get_determined_states(const std::vector<std::set<ID>>& power_set) const {
-    std::map<std::set<ID>, State> determined_states;
-
-    for (const std::set<ID>& set : power_set) {
-        bool accepting{std::any_of(set.begin(), set.end(), [this](ID id) {
-            return states_[id].accepting();
-        })};
-
-        determined_states[set] = State{accepting, determined_states.size()};
-    }
-
-    return determined_states;
-}
-
 void Automaton::convert() {
     remove_epsilons();
     remove_unreachable_states();
@@ -250,35 +235,59 @@ void Automaton::convert() {
         return;
     }
 
-    std::vector<std::set<ID>> power_set = get_power_set(states_.size());
-    std::map<std::set<ID>, State> determined_states = get_determined_states(power_set);
+    std::set<char> alphabet{get_alphabet(states_)};
+    std::map<std::set<ID>, ID> subset_ids;
+    std::vector<std::set<ID>> subsets;
+    std::queue<ID> pending;
 
-    for (auto& set : determined_states) {
-        for (char symbol : get_alphabet(states_)) {
+    std::set<ID> initial_subset{initial_state_};
+    subset_ids[initial_subset] = 0;
+    subsets.push_back(initial_subset);
+    pending.push(0);
+
+    std::vector<State> new_states;
+
+    while (!pending.empty()) {
+        ID id{pending.front()};
+        pending.pop();
+
+        std::set<ID> subset{subsets[id]};
+        bool accepting{std::any_of(subset.begin(), subset.end(), [this](ID s) {
+            return states_[s].accepting();
+        })};
+
+        State state{accepting, id};
+
+        for (char symbol : alphabet) {
             std::set<ID> neighbours;
 
-            for (ID id : set.first) {
-                for (const Transition& transition : states_[id].transitions()) {
+            for (ID s : subset) {
+                for (const Transition& transition : states_[s].transitions()) {
                     if (transition.symbol() == symbol) {
                         neighbours.insert(transition.endpoint());
                     }
                 }
             }
 
-            set.second.add_transition(determined_states[neighbours].id(), symbol);
+            if (neighbours.empty()) {
+                continue;
+            }
+
+            auto [it, inserted] = subset_ids.try_emplace(neighbours, subsets.size());
+
+            if (inserted) {
+                subsets.push_back(neighbours);
+                pending.push(it->second);
+            }
+
+            state.add_transition(symbol, it->second);
         }
-    }
 
-    std::vector<State> new_states;
-    new_states.reserve(determined_states.size());
-
-    for (auto&& pair : determined_states) {
-        new_states.push_back(std::move(pair.second));
+        new_states.push_back(std::move(state));
     }
 
     states_ = std::move(new_states);
-    remove_unreachable_states();
-    normalise();
+    initial_state_ = 0;
 }
 
 Automaton Automaton::operator+(const Automaton& other) const {
@@ -304,8 +313,6 @@ Automaton Automaton::operator+(const Automaton& other) const {
     ID lhs_old_initial{initial_state_ + lhs_incr};
     ID rhs_old_initial{other.initial_state_ + rhs_incr};
 
-    new_states[0].set_accepting(false);
-    new_states[states_.size()].set_accepting(false);
     new_initial.add_epsilon_transition(lhs_old_initial);
     new_initial.add_epsilon_transition(rhs_old_initial);
     new_states.insert(new_states.begin(), new_initial);

@@ -1,5 +1,8 @@
 #include "automaton/state.hpp"
 
+#include <algorithm>
+#include <array>
+
 State::State(bool accepting, ID id) : accepting_{accepting}, id_{id} {}
 
 bool State::accepting() const {
@@ -27,14 +30,20 @@ void State::set_transitions(const std::vector<Transition>& transitions) {
 }
 
 bool State::deterministic() const {
-    std::vector<bool> occur(std::numeric_limits<char>::max());
+    std::array<bool, 256> seen;
 
     for (const Transition& x : transitions_) {
-        if (occur[x.endpoint()] || x.epsilon()) {
+        if (x.epsilon()) {
             return false;
         }
 
-        occur[x.endpoint()] = true;
+        unsigned char symbol{static_cast<unsigned char>(x.symbol())};
+
+        if (seen[symbol]) {
+            return false;
+        }
+
+        seen[symbol] = true;
     }
 
     return true;
