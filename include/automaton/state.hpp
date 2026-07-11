@@ -1,7 +1,6 @@
 #ifndef AUTOMATON_STATE_HPP
 #define AUTOMATON_STATE_HPP
 
-#include <limits>
 #include <ostream>
 #include <vector>
 

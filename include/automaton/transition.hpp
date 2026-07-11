@@ -1,7 +1,6 @@
 #ifndef AUTOMATON_TRANSITION_HPP
 #define AUTOMATON_TRANSITION_HPP
 
-#include <compare>
 #include <ostream>
 
 using ID = std::size_t;

@@ -1,5 +1,13 @@
 #include "controller/parser.hpp"
 
+#include <algorithm>
+#include <cctype>
+#include <istream>
+#include <iterator>
+#include <sstream>
+#include <stack>
+#include <string>
+
 Parser::Parser(const std::string& input) {
     parse(input);
 }

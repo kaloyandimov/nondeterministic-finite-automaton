@@ -1,7 +1,17 @@
 #include "automaton/automaton.hpp"
 
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <map>
 #include <memory>
+#include <optional>
 #include <queue>
+#include <set>
+#include <stack>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 Automaton::Automaton(const std::vector<State>& states, ID initial_state, ID id) : states_{states}, initial_state_{initial_state}, id_{id} {}
 

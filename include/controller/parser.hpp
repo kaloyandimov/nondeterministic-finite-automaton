@@ -1,14 +1,9 @@
 #ifndef CONTROLLER_PARSER_HPP
 #define CONTROLLER_PARSER_HPP
 
-#include <istream>
-#include <iterator>
-#include <memory>
-#include <sstream>
 #include <stack>
-#include <stdexcept>
 #include <string>
-#include <vector>
+#include <memory>
 
 #include "automaton/automaton.hpp"
 #include "exception/invalid_expression_exception.hpp"

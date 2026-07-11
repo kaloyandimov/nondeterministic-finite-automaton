@@ -1,5 +1,9 @@
 #include "controller/controller.hpp"
 
+#include <exception>
+#include <filesystem>
+#include <fstream>
+
 std::vector<Command> Controller::commands;
 
 Controller::Controller(std::istream& in, std::ostream& out, std::ostream& err) : in_{in}, out_{out}, err_{err}, running_{false} {}

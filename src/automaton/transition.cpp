@@ -1,5 +1,7 @@
 #include "automaton/transition.hpp"
 
+#include <compare>
+
 Transition::Transition(char symbol, ID endpoint) : symbol_{symbol}, endpoint_{endpoint} {}
 
 char Transition::symbol() const {

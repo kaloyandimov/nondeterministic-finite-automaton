@@ -1,9 +1,8 @@
 #ifndef CONTROLLER_COMMAND_HPP
 #define CONTROLLER_COMMAND_HPP
 
+#include <cstddef>
 #include <functional>
-#include <iomanip>
-#include <optional>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -41,4 +40,5 @@ class Command {
     ulong arg_count_;
     Function function_;
 };
+
 #endif /* CONTROLLER_COMMAND_HPP */

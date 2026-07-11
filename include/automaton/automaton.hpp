@@ -1,13 +1,8 @@
 #ifndef AUTOMATON_AUTOMATON_HPP
 #define AUTOMATON_AUTOMATON_HPP
 
-#include <algorithm>
 #include <iostream>
-#include <iterator>
-#include <map>
-#include <optional>
 #include <set>
-#include <stack>
 #include <string>
 #include <unordered_map>
 #include <vector>

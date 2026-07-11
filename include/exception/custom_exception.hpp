@@ -2,6 +2,7 @@
 #define EXCEPTION_CUSTOM_EXCEPTION_HPP
 
 #include <stdexcept>
+#include <string>
 
 class CustomException : public std::logic_error {
    public:
