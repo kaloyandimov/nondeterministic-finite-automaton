@@ -376,49 +376,33 @@ Automaton Automaton::operator*() const {
     return Automaton{new_states};
 }
 
-std::istream& operator>>(std::istream& in, Automaton& automaton) {
-    ulong states_size{};
+void Automaton::print(std::ostream& out) const {
+    out << "Automaton " << id_ << '\n';
+    out << "Initial state: " << initial_state_ << '\n';
+    out << "States:\n";
 
-    in >> automaton.initial_state_ >> states_size;
+    for (const State& state : states_) {
+        out << "  " << state.id();
 
-    automaton.states_.clear();
-    automaton.states_.reserve(states_size);
+        if (state.id() == initial_state_) {
+            out << " [initial]";
+        }
 
-    bool accepting{};
-    for (ulong i{0}; i < states_size; i++) {
-        in >> accepting;
+        if (state.accepting()) {
+            out << " [accepting]";
+        }
 
-        automaton.states_.emplace_back(accepting, i);
+        out << '\n';
+
+        for (const Transition& transition :
+             state.transitions()) {
+            out << "  "
+                << state.id()
+                << " --"
+                << transition.symbol()
+                << "--> "
+                << transition.endpoint()
+                << '\n';
+        }
     }
-
-    ulong transition_count{};
-    ID head{}, tail{};
-    char symbol{};
-
-    in >> transition_count;
-
-    for (ulong i{0}; i < transition_count; i++) {
-        in >> head >> symbol >> tail;
-
-        automaton.states_[head].add_transition(symbol, tail);
-    }
-
-    return in;
-}
-
-std::ostream& operator<<(std::ostream& out, const Automaton& automaton) {
-    out << automaton.initial_state_ << " " << automaton.states_.size() << "\n";
-
-    for (const State& state : automaton.states_) {
-        out << state.accepting() << " ";
-    }
-
-    out << "\n"
-        << automaton.transition_count() << "\n";
-
-    for (const State& state : automaton.states_) {
-        out << state;
-    }
-
-    return out;
 }

@@ -15,10 +15,12 @@
 #include "exception/invalid_argument_count_exception.hpp"
 #include "exception/invalid_expression_exception.hpp"
 #include "exception/unbalanced_brackets_exception.hpp"
+#include "manager/file_manager.hpp"
+#include "serialization/automaton_serializer.hpp"
 
 class Controller {
-   public:
-    Controller(std::istream& = std::cin, std::ostream& = std::cout, std::ostream& = std::cerr);
+ public:
+    Controller(FileManager<Automaton, AutomatonSerializer> fm = FileManager<Automaton, AutomatonSerializer>{}, std::istream& = std::cin, std::ostream& = std::cout, std::ostream& = std::cerr);
     Controller(const Controller&) = delete;
     Controller& operator=(const Controller&) = delete;
     Controller(Controller&&) = delete;
@@ -28,9 +30,9 @@ class Controller {
     void run();
     void stop();
 
-   private:
+ private:
+    FileManager<Automaton, AutomatonSerializer> fm_;
     std::vector<Automaton> automata_;
-    std::filesystem::path path_;
     bool running_;
 
     std::istream& in_;

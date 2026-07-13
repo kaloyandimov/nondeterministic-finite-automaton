@@ -1,7 +1,7 @@
 #ifndef AUTOMATON_AUTOMATON_HPP
 #define AUTOMATON_AUTOMATON_HPP
 
-#include <iostream>
+#include <ostream>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -38,10 +38,9 @@ class Automaton {
     Automaton operator*(const Automaton&) const;
     Automaton operator*() const;
 
-    friend std::istream& operator>>(std::istream&, Automaton&);
-    friend std::ostream& operator<<(std::ostream&, const Automaton&);
+    void print(std::ostream&) const;
 
-   private:
+ private:
     std::vector<State> states_;
     ID initial_state_;
     ID id_;

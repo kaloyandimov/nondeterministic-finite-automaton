@@ -6,7 +6,7 @@
 
 std::vector<Command> Controller::commands;
 
-Controller::Controller(std::istream& in, std::ostream& out, std::ostream& err) : in_{in}, out_{out}, err_{err}, running_{false} {}
+Controller::Controller(FileManager<Automaton, AutomatonSerializer> fm, std::istream& in, std::ostream& out, std::ostream& err) : fm_{fm}, in_{in}, out_{out}, err_{err}, running_{false} {}
 
 bool Controller::basic(const std::string& cmd) const {
     return cmd == "help" || cmd == "open" || cmd == "exit";
@@ -35,7 +35,7 @@ void Controller::run() {
             break;
         }
 
-        if (!path_.has_filename() && !basic(input.parsed_name())) {
+        if (!fm_.is_open() && !basic(input.parsed_name())) {
             err_ << "First open a file\n";
             continue;
         }
@@ -74,7 +74,7 @@ bool Controller::init_commands() {
 
     register_command("print", "<id>", "print automaton", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.out_ << ctrl.automata_.at(std::stoull(args[0]));
+                         ctrl.automata_.at(std::stoull(args[0])).print(ctrl.out_);
                      });
 
     register_command("empty", "<id>", "check if automaton's language is empty", 1,
@@ -149,84 +149,47 @@ bool Controller::init_commands() {
 
     register_command("open", "<filename>", "open file", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         if (!ctrl.path_.empty()) {
+                         if (ctrl.fm_.is_open()) {
                              ctrl.out_ << "Another file is already opened\n";
                              return;
                          }
 
-                         std::ifstream file{ctrl.path_ = args[0]};
+                         ctrl.fm_.open(args[0]);
 
-                         if (!file) {
-                             ctrl.out_ << "New file opened\n";
+                         if (!ctrl.fm_.file_exists()) {
+                             ctrl.out_ << "New file created\n";
                              return;
                          }
 
                          ctrl.out_ << "File opened successfully\n";
-
-                         ulong count{0};
-                         if (!std::filesystem::is_empty(ctrl.path_)) {
-                             Automaton temp;
-
-                             while (file >> temp) {
-                                 temp.set_id(ctrl.automata_.size());
-                                 ctrl.automata_.push_back(std::move(temp));
-                                 count++;
-                             }
-                         }
-
-                         ctrl.out_ << count << (count == 1 ? " automaton" : " automata") << " loaded\n";
+                         ctrl.automata_ = ctrl.fm_.load();
+                         ctrl.out_ << ctrl.automata_.size() << (ctrl.automata_.size() == 1 ? " automaton" : " automata") << " loaded\n";
                      });
 
     register_command("save", "", "save data to current file", 0,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         std::ofstream file{ctrl.path_};
-
-                         if (!file) {
-                             ctrl.err_ << "File could not be saved\n";
-                             return;
-                         }
-
-                         for (const Automaton& a : ctrl.automata_) {
-                             file << a << "\n";
-                         }
+                         ctrl.fm_.save(ctrl.automata_);
 
                          ctrl.out_ << "File successfully saved\n";
                      });
 
     register_command("saveas", "<filename>", "save data to file", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         std::ofstream file{args[0]};
-
-                         if (!file) {
-                             ctrl.err_ << "File could not be saved\n";
-                             return;
-                         }
-
-                         for (const Automaton& x : ctrl.automata_) {
-                             file << x << "\n";
-                         }
+                         ctrl.fm_.save_as(ctrl.automata_, args[0]);
 
                          ctrl.out_ << "File successfully saved\n";
                      });
 
     register_command("saveone", "<id> <filename>", "save automaton to file", 2,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         std::ofstream file{args[1]};
-
-                         if (!file) {
-                             ctrl.err_ << "File could not be saved\n";
-                             return;
-                         }
-
-                         file << ctrl.automata_.at(std::stoull(args[0]));
+                         ctrl.fm_.save_as(ctrl.automata_.at(std::stoull(args[0])), args[1]);
 
                          ctrl.out_ << "Automaton " << args[0] << " successfully saved\n";
                      });
 
     register_command("close", "", "close current file", 0,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.automata_.clear();
-                         ctrl.path_.clear();
+                         ctrl.fm_.close();
 
                          ctrl.out_ << "File closed successfully\n";
                      });
