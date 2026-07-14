@@ -11,10 +11,13 @@
 #include "automaton/transition.hpp"
 
 class Automaton {
-   public:
-    explicit Automaton(const std::vector<State>& = {}, ID initial_state = 0, ID id = 0);
+ public:
+    using Alphabet = std::set<char>;
+
+    explicit Automaton(const Alphabet&, const std::vector<State>& = {}, ID initial_state = 0, ID id = 0);
     explicit Automaton(char, ID initial_state = 0, ID id = 0);
 
+    const std::set<char>& alphabet() const;
     std::vector<State> states() const;
     ID initial_state() const;
     ID id() const;
@@ -41,14 +44,15 @@ class Automaton {
     void print(std::ostream&) const;
 
  private:
+    Alphabet alphabet_;
     std::vector<State> states_;
     ID initial_state_;
     ID id_;
-    
+
     void depth_first_search(std::vector<bool>&, ID = 0) const;
 
     std::unordered_map<ID, ID> get_updated_ids() const;
-    std::set<char> get_alphabet(const std::vector<State>&) const;
+    Alphabet combine_alphabets(const Automaton&, const Automaton&) const;
 
     void remove_epsilons_util(ID, ID, std::vector<bool>&, bool&);
 };

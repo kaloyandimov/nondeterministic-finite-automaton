@@ -13,14 +13,19 @@
 #include <unordered_map>
 #include <vector>
 
-Automaton::Automaton(const std::vector<State>& states, ID initial_state, ID id) : states_{states}, initial_state_{initial_state}, id_{id} {}
+Automaton::Automaton(const Automaton::Alphabet& alphabet, const std::vector<State>& states, ID initial_state, ID id) : alphabet_{alphabet}, states_{states}, initial_state_{initial_state}, id_{id} {}
 
 Automaton::Automaton(char symbol, ID initial_state, ID id) : initial_state_{initial_state}, id_{id} {
     State s{false, initial_state};
     State c{true, initial_state + 1};
     s.add_transition(symbol, initial_state + 1);
 
+    alphabet_ = {symbol};
     states_ = {std::move(s), std::move(c)};
+}
+
+const Automaton::Alphabet& Automaton::alphabet() const {
+    return alphabet_;
 }
 
 std::vector<State> Automaton::states() const {
@@ -224,18 +229,6 @@ void Automaton::normalise() {
     std::sort(states_.begin(), states_.end());
 }
 
-std::set<char> Automaton::get_alphabet(const std::vector<State>& states) const {
-    std::set<char> alphabet;
-
-    for (const State& state : states) {
-        for (const Transition& transition : state.transitions()) {
-            alphabet.insert(transition.symbol());
-        }
-    }
-
-    return alphabet;
-}
-
 void Automaton::convert() {
     remove_epsilons();
     remove_unreachable_states();
@@ -245,7 +238,6 @@ void Automaton::convert() {
         return;
     }
 
-    std::set<char> alphabet{get_alphabet(states_)};
     std::map<std::set<ID>, ID> subset_ids;
     std::vector<std::set<ID>> subsets;
     std::queue<ID> pending;
@@ -268,7 +260,7 @@ void Automaton::convert() {
 
         State state{accepting, id};
 
-        for (char symbol : alphabet) {
+        for (char symbol : alphabet_) {
             std::set<ID> neighbours;
 
             for (ID s : subset) {
@@ -327,7 +319,7 @@ Automaton Automaton::operator+(const Automaton& other) const {
     new_initial.add_epsilon_transition(rhs_old_initial);
     new_states.insert(new_states.begin(), new_initial);
 
-    return Automaton{new_states};
+    return Automaton{combine_alphabets(*this, other), new_states};
 }
 
 Automaton Automaton::operator*(const Automaton& other) const {
@@ -349,7 +341,7 @@ Automaton Automaton::operator*(const Automaton& other) const {
 
     std::move(rhs_states.begin(), rhs_states.end(), std::back_inserter(new_states));
 
-    return Automaton{new_states};
+    return Automaton{combine_alphabets(*this, other), new_states};
 }
 
 Automaton Automaton::operator*() const {
@@ -373,12 +365,18 @@ Automaton Automaton::operator*() const {
 
     new_states.insert(new_states.begin(), new_initial);
 
-    return Automaton{new_states};
+    return Automaton{alphabet_, new_states};
 }
 
 void Automaton::print(std::ostream& out) const {
-    out << "Automaton " << id_ << '\n';
-    out << "Initial state: " << initial_state_ << '\n';
+    out << "ID: " << id_ << '\n';
+    out << "Alphabet: ";
+
+    for (char c : alphabet_) {
+        out << c;
+    }
+
+    out << "\nInitial state: " << initial_state_ << '\n';
     out << "States:\n";
 
     for (const State& state : states_) {
@@ -405,4 +403,12 @@ void Automaton::print(std::ostream& out) const {
                 << '\n';
         }
     }
+}
+
+Automaton::Alphabet Automaton::combine_alphabets(const Automaton& lhs, const Automaton& rhs) const {
+    Automaton::Alphabet result = lhs.alphabet();
+
+    result.insert(rhs.alphabet().begin(), rhs.alphabet().end());
+
+    return result;
 }

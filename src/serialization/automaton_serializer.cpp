@@ -3,6 +3,11 @@
 Automaton AutomatonSerializer::read(std::istream& in) const {
     ID initial_state_id;
     ulong states_size{};
+    std::string input;
+
+    in >> input;
+
+    Automaton::Alphabet alphabet(input.begin(), input.end());
 
     in >> initial_state_id >> states_size;
 
@@ -29,13 +34,17 @@ Automaton AutomatonSerializer::read(std::istream& in) const {
         states[head].add_transition(symbol, tail);
     }
 
-    return Automaton{std::move(states), initial_state_id};
+    return Automaton{alphabet, std::move(states), initial_state_id};
 }
 
 void AutomatonSerializer::write(std::ostream& out, const Automaton& automaton) const {
     auto states = automaton.states();
 
-    out << automaton.initial_state() << " " << states.size() << '\n';
+    for (char c : automaton.alphabet()) {
+        out << c;
+    }
+
+    out << '\n' << automaton.initial_state() << " " << states.size() << '\n';
 
     for (const State& state : states) {
         out << state.accepting() << " ";
