@@ -77,6 +77,11 @@ bool Controller::init_commands() {
                          ctrl.automata_.at(std::stoull(args[0])).print(ctrl.out_);
                      });
 
+    register_command("export", "<id> <path>", "export automaton", 2,
+                     [](Controller& ctrl, const std::vector<std::string>& args) {
+                         ctrl.exporter_.export_to_file(ctrl.automata_.at(std::stoull(args[0])), args[1]);
+                     });
+
     register_command("empty", "<id>", "check if automaton's language is empty", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
                          ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).empty() << "\n";
