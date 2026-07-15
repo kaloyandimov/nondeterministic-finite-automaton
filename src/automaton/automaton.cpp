@@ -13,9 +13,9 @@
 #include <unordered_map>
 #include <vector>
 
-Automaton::Automaton(const Automaton::Alphabet& alphabet, const std::vector<State>& states, ID initial_state, ID id) : alphabet_{alphabet}, states_{states}, initial_state_{initial_state}, id_{id} {}
+Automaton::Automaton(const Automaton::Alphabet& alphabet, const std::vector<State>& states, ID initial_state) : alphabet_{alphabet}, states_{states}, initial_state_{initial_state}  {}
 
-Automaton::Automaton(char symbol, ID initial_state, ID id) : initial_state_{initial_state}, id_{id} {
+Automaton::Automaton(char symbol, ID initial_state) : initial_state_{initial_state} {
     State s{false, initial_state};
     State c{true, initial_state + 1};
     s.add_transition(symbol, initial_state + 1);
@@ -34,22 +34,6 @@ std::vector<State> Automaton::states() const {
 
 ID Automaton::initial_state() const {
     return initial_state_;
-}
-
-ID Automaton::id() const {
-    return id_;
-}
-
-void Automaton::set_states(const std::vector<State>& states) {
-    states_ = states;
-}
-
-void Automaton::set_initial_state(ID initial_state) {
-    initial_state_ = initial_state;
-}
-
-void Automaton::set_id(ID id) {
-    id_ = id;
 }
 
 bool Automaton::empty() const {
@@ -369,7 +353,6 @@ Automaton Automaton::operator*() const {
 }
 
 void Automaton::print(std::ostream& out) const {
-    out << "ID: " << id_ << '\n';
     out << "Alphabet: ";
 
     for (char c : alphabet_) {

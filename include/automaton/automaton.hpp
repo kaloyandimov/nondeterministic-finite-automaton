@@ -14,17 +14,12 @@ class Automaton {
  public:
     using Alphabet = std::set<char>;
 
-    explicit Automaton(const Alphabet&, const std::vector<State>& = {}, ID initial_state = 0, ID id = 0);
-    explicit Automaton(char, ID initial_state = 0, ID id = 0);
+    explicit Automaton(const Alphabet&, const std::vector<State>& = {}, ID initial_state = 0);
+    explicit Automaton(char, ID initial_state = 0);
 
     const std::set<char>& alphabet() const;
     std::vector<State> states() const;
     ID initial_state() const;
-    ID id() const;
-
-    void set_states(const std::vector<State>&);
-    void set_initial_state(ID);
-    void set_id(ID);
 
     bool empty() const;
     bool deterministic() const;
@@ -47,7 +42,6 @@ class Automaton {
     Alphabet alphabet_;
     std::vector<State> states_;
     ID initial_state_;
-    ID id_;
 
     void depth_first_search(std::vector<bool>&, ID = 0) const;
 

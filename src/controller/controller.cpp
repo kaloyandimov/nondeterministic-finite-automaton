@@ -6,7 +6,18 @@
 
 std::vector<Command> Controller::commands;
 
-Controller::Controller(FileManager<Automaton, AutomatonSerializer> fm, std::istream& in, std::ostream& out, std::ostream& err) : fm_{fm}, in_{in}, out_{out}, err_{err}, running_{false} {}
+Controller::Controller(
+    Storage<Automaton> storage,
+    FileManager<Automaton, AutomatonSerializer> fm, 
+    std::istream& in, 
+    std::ostream& out, 
+    std::ostream& err) : 
+    storage_{storage},
+    fm_{fm}, 
+    in_{in}, 
+    out_{out}, 
+    err_{err}, 
+    running_{false} {}
 
 bool Controller::basic(const std::string& cmd) const {
     return cmd == "help" || cmd == "open" || cmd == "exit";
@@ -65,8 +76,8 @@ bool Controller::init = Controller::init_commands();
 bool Controller::init_commands() {
     register_command("list", "", "list all ids", 0,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         for (const Automaton& x : ctrl.automata_) {
-                             ctrl.out_ << x.id() << " ";
+                         for (const auto& [id, automaton] : ctrl.storage_) {
+                             ctrl.out_ << id << ' ';
                          }
 
                          ctrl.out_ << std::endl;
@@ -74,88 +85,73 @@ bool Controller::init_commands() {
 
     register_command("print", "<id>", "print automaton", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.automata_.at(std::stoull(args[0])).print(ctrl.out_);
+                         ctrl.storage_.get(std::stoull(args[0])).print(ctrl.out_);
                      });
 
     register_command("export", "<id> <path>", "export automaton", 2,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.exporter_.export_to_file(ctrl.automata_.at(std::stoull(args[0])), args[1]);
+                         ctrl.exporter_.export_to_file(ctrl.storage_.get(std::stoull(args[0])), args[1]);
                      });
 
     register_command("empty", "<id>", "check if automaton's language is empty", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).empty() << "\n";
+                         ctrl.out_ << std::boolalpha << ctrl.storage_.get(std::stoull(args[0])).empty() << "\n";
                      });
 
     register_command("deterministic", "<id>", "check if automaton is deterministic", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).deterministic() << "\n";
+                         ctrl.out_ << std::boolalpha << ctrl.storage_.get(std::stoull(args[0])).deterministic() << "\n";
                      });
 
     register_command("recognise", "<id> <word>", "check if automaton recognises word", 2,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.out_ << std::boolalpha << ctrl.automata_.at(std::stoull(args[0])).recognises(args[1]) << "\n";
+                         ctrl.out_ << std::boolalpha << ctrl.storage_.get(std::stoull(args[0])).recognises(args[1]) << "\n";
                      });
 
     register_command("reg", "<regex>", "create automaton from regular expression", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
                          Automaton automaton{parse<Automaton>(args[0])->evaluate()};
-                         automaton.set_id(ctrl.automata_.size());
 
-                         ctrl.automata_.push_back(std::move(automaton));
-
-                         ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
+                         ctrl.out_ << "Automaton created. ID: " << ctrl.storage_.add(automaton) << "\n";
                      });
 
     register_command("union", "<id1> <id2>", "find the union of two automata", 2,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
                          Automaton automaton{
-                             ctrl.automata_.at(std::stoull(args[0])) +
-                             ctrl.automata_.at(std::stoull(args[1]))};
-                         automaton.set_id(ctrl.automata_.size());
+                             ctrl.storage_.get(std::stoull(args[0])) +
+                             ctrl.storage_.get(std::stoull(args[0]))};
 
-                         ctrl.automata_.push_back(std::move(automaton));
-
-                         ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
+                         ctrl.out_ << "Automaton created. ID: " << ctrl.storage_.add(automaton) << "\n";
                      });
 
     register_command("concat", "<id1> <id2>", "find the concatenation of two automata", 2,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
                          Automaton automaton{
-                             ctrl.automata_.at(std::stoull(args[0])) *
-                             ctrl.automata_.at(std::stoull(args[1]))};
-                         automaton.set_id(ctrl.automata_.size());
+                             ctrl.storage_.get(std::stoull(args[0])) *
+                             ctrl.storage_.get(std::stoull(args[0]))};
 
-                         ctrl.automata_.push_back(std::move(automaton));
-
-                         ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
+                         ctrl.out_ << "Automaton created. ID: " << ctrl.storage_.add(automaton) << "\n";
                      });
 
     register_command("kleene", "<id>", "find the kleene closure of automaton", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         Automaton automaton{*ctrl.automata_.at(std::stoull(args[0]))};
-                         automaton.set_id(ctrl.automata_.size());
+                         Automaton automaton{*ctrl.storage_.get(std::stoull(args[0]))};
 
-                         ctrl.automata_.push_back(std::move(automaton));
-
-                         ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
+                         ctrl.out_ << "Automaton created. ID: " << ctrl.storage_.add(automaton) << "\n";
                      });
 
     register_command("convert", "<id>", "convert NFA to DFA", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         Automaton automaton{ctrl.automata_.at(std::stoull(args[0]))};
+                         Automaton automaton{ctrl.storage_.get(std::stoull(args[0]))};
                          automaton.convert();
-                         automaton.set_id(ctrl.automata_.size());
 
-                         ctrl.automata_.push_back(std::move(automaton));
-
-                         ctrl.out_ << "Automaton created. ID: " << automaton.id() << "\n";
+                         ctrl.out_ << "Automaton created. ID: " << ctrl.storage_.add(automaton) << "\n";
                      });
 
     register_command("open", "<filename>", "open file", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
                          if (ctrl.fm_.is_open()) {
-                             ctrl.out_ << "Another file is already opened\n";
+                             ctrl.out_ << "Another file is already open\n";
                              return;
                          }
 
@@ -167,27 +163,33 @@ bool Controller::init_commands() {
                          }
 
                          ctrl.out_ << "File opened successfully\n";
-                         ctrl.automata_ = ctrl.fm_.load();
-                         ctrl.out_ << ctrl.automata_.size() << (ctrl.automata_.size() == 1 ? " automaton" : " automata") << " loaded\n";
+
+                         auto size = ctrl.storage_.size();
+
+                         ctrl.fm_.read(ctrl.storage_);
+
+                         auto count = ctrl.storage_.size() - size;
+
+                         ctrl.out_ << count << (count == 1 ? " automaton" : " automata") << " loaded\n";
                      });
 
     register_command("save", "", "save data to current file", 0,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.fm_.save(ctrl.automata_);
+                         ctrl.fm_.save(ctrl.storage_);
 
                          ctrl.out_ << "File successfully saved\n";
                      });
 
     register_command("saveas", "<filename>", "save data to file", 1,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.fm_.save_as(ctrl.automata_, args[0]);
+                         ctrl.fm_.save_as(ctrl.storage_, args[0]);
 
                          ctrl.out_ << "File successfully saved\n";
                      });
 
     register_command("saveone", "<id> <filename>", "save automaton to file", 2,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.fm_.save_as(ctrl.automata_.at(std::stoull(args[0])), args[1]);
+                         ctrl.fm_.save_as(ctrl.storage_.get(std::stoull(args[0])), args[1]);
 
                          ctrl.out_ << "Automaton " << args[0] << " successfully saved\n";
                      });

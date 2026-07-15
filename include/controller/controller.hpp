@@ -18,15 +18,17 @@
 #include "export/automaton_dot_exporter.hpp"
 #include "manager/file_manager.hpp"
 #include "serialization/automaton_serializer.hpp"
+#include "storage/storage.hpp"
 
 class Controller {
  public:
     Controller(
-      FileManager<Automaton, AutomatonSerializer> fm = FileManager<Automaton, AutomatonSerializer>{},
-      std::istream& = std::cin, 
-      std::ostream& = std::cout, 
-      std::ostream& = std::cerr
-   );
+        Storage<Automaton> as = {},
+        FileManager<Automaton, AutomatonSerializer> fm = FileManager<Automaton, AutomatonSerializer>{},
+        std::istream& = std::cin,
+        std::ostream& = std::cout,
+        std::ostream& = std::cerr
+    );
 
     Controller(const Controller&) = delete;
     Controller& operator=(const Controller&) = delete;
@@ -38,10 +40,9 @@ class Controller {
     void stop();
 
  private:
+    Storage<Automaton> storage_;
     FileManager<Automaton, AutomatonSerializer> fm_;
     AutomatonDotExporter exporter_;
-
-    std::vector<Automaton> automata_;
     bool running_;
 
     std::istream& in_;

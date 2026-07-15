@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 
+#include "storage/storage.hpp"
 #include "serialization/serializer_for.hpp"
 
 template <typename T, typename S>
@@ -20,20 +21,21 @@ class FileManager {
     void open(const std::filesystem::path&);
     void close();
 
-    std::vector<T> load() const;
+    void read(Storage<T>&) const;
+    void read(Storage<T>&, const std::filesystem::path&) const;
 
     void save(const T&);
-    void save(const std::vector<T>&);
+    void save(const Storage<T>&);
 
     void save_as(const T&, const std::filesystem::path&);
-    void save_as(const std::vector<T>&, const std::filesystem::path&);
+    void save_as(const Storage<T>&, const std::filesystem::path&);
     
  private:
     S serializer_;
     std::filesystem::path path_;
 
     void write(const T&, const std::filesystem::path&) const;
-    void write(const std::vector<T>&, const std::filesystem::path&) const;
+    void write(const Storage<T>&, const std::filesystem::path&) const;
 };
 
 template <typename T, typename S>
@@ -66,68 +68,71 @@ void FileManager<T, S>::close() {
 
 template <typename T, typename S>
 requires SerializerFor<S, T>
-void FileManager<T, S>::write(const T& value, const std::filesystem::path& path) const {
-    std::ofstream file{path_};
+void FileManager<T, S>::write(const T& object, const std::filesystem::path& path) const {
+    std::ofstream file{path};
     
     file << 1 << '\n';
 
-    serializer_.write(file, value);
+    serializer_.write(file, object);
 }
 
 template <typename T, typename S>
 requires SerializerFor<S, T>
-void FileManager<T, S>::write(const std::vector<T>& values, const std::filesystem::path& path) const {
-    std::ofstream file{path_};
+void FileManager<T, S>::write(const Storage<T>& storage, const std::filesystem::path& path) const {
+    std::ofstream file{path};
     
-    file << values.size() << '\n';
+    file << storage.size() << '\n';
 
-    for (const auto& value : values) {
-        serializer_.write(file, value);
+    for (const auto& entry : storage) {
+        serializer_.write(file, entry.second);
     }
 }
 
 template <typename T, typename S>
 requires SerializerFor<S, T>
-void FileManager<T, S>::save(const T& value) {
-    save_as(value, path_);
+void FileManager<T, S>::save(const T& object) {
+    save_as(object, path_);
 }
 
 template <typename T, typename S>
 requires SerializerFor<S, T>
-void FileManager<T, S>::save(const std::vector<T>& values) {
-    save_as(values, path_);
+void FileManager<T, S>::save(const Storage<T>& storage) {
+    save_as(storage, path_);
 }
 
 template <typename T, typename S>
 requires SerializerFor<S, T>
-void FileManager<T, S>::save_as(const T& value, const std::filesystem::path& path) {
-    write(value, path);
+void FileManager<T, S>::save_as(const T& object, const std::filesystem::path& path) {
+    write(object, path);
 
     path_ = path;
 }
 
 template <typename T, typename S>
 requires SerializerFor<S, T>
-void FileManager<T, S>::save_as(const std::vector<T>& values, const std::filesystem::path& path) {
-    write(values, path);
+void FileManager<T, S>::save_as(const Storage<T>& storage, const std::filesystem::path& path) {
+    write(storage, path);
 
     path_ = path;
 }
 
 template <typename T, typename S>
 requires SerializerFor<S, T>
-std::vector<T> FileManager<T, S>::load() const {
-    std::ifstream file{path_};
-    std::vector<T> values;
+void FileManager<T, S>::read(Storage<T>& storage) const {
+    read(storage, path_);
+}
+
+template <typename T, typename S>
+requires SerializerFor<S, T>
+void FileManager<T, S>::read(Storage<T>& storage, const std::filesystem::path& path) const {
+    std::ifstream file{path};
     int count = 0;
 
     file >> count;
 
     for (int i = 0; i < count; i++) {
-        values.push_back(serializer_.read(file));
+        storage.add(serializer_.read(file));
     }
-
-    return values;
 }
 
 #endif  // MANAGER_FILE_MANAGER_HPP
