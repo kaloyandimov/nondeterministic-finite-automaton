@@ -6,7 +6,6 @@
 #include <string>
 
 #include "automaton/automaton.hpp"
-#include "automaton/state.hpp"
 #include "automaton/transition.hpp"
 
 std::string AutomatonDotExporter::to_string(const Automaton& automaton) const {
@@ -15,17 +14,13 @@ std::string AutomatonDotExporter::to_string(const Automaton& automaton) const {
     out << "digraph automaton {\n";
     out << "    rankdir=LR;\n";
     out << "    node [shape=circle];\n\n";
-
-    // Invisible start node.
     out << "    __start [shape=point];\n";
-    out << "    __start -> "
-        << automaton.initial_state()
-        << ";\n\n";
+    out << "    __start -> " << automaton.initial_state() << ";\n\n";
 
-    for (const State& state : automaton.states()) {
-        out << "    " << state.id();
+    for (auto i{0}; i < automaton.states().size(); i++) {
+        out << "    " << i;
 
-        if (state.accepting()) {
+        if (automaton.states()[i].is_accepting()) {
             out << " [shape=doublecircle]";
         }
 
@@ -34,21 +29,11 @@ std::string AutomatonDotExporter::to_string(const Automaton& automaton) const {
 
     out << '\n';
 
-    for (const State& state : automaton.states()) {
-        for (const Transition& transition : state.transitions()) {
-            const std::string label{
-                transition.epsilon()
-                    ? "ε"
-                    : std::string{transition.symbol()}
-            };
+    for (auto i{0}; i < automaton.states().size(); i++) {
+        for (const Transition& transition : automaton.states()[i].transitions()) {
+            const std::string label{transition.is_epsilon() ? "ε" : std::string{transition.symbol()}};
 
-            out << "    "
-                << state.id()
-                << " -> "
-                << transition.endpoint()
-                << " [label=\""
-                << escape(label)
-                << "\"];\n";
+            out << "    " << i << " -> " << transition.destination() << " [label=\"" << escape(label) << "\"];\n";
         }
     }
 

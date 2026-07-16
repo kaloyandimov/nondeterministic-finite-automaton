@@ -5,35 +5,33 @@
 
 template <typename T>
 class KleeneStar : public Expression<T> {
-   public:
-    KleeneStar(const Expression<T>&);
+ public:
+    explicit KleeneStar(const Expression<T>& expression);
 
     T evaluate() const override;
     std::string to_string() const override;
     std::unique_ptr<Expression<T>> clone() const override;
 
-   private:
-    std::unique_ptr<Expression<T>> expr;
+ private:
+    std::unique_ptr<Expression<T>> expression_;
 };
 
 template <typename T>
-KleeneStar<T>::KleeneStar(const Expression<T>& e) : expr{e.clone()} {
-    // nothing
-}
+KleeneStar<T>::KleeneStar(const Expression<T>& expression) : expression_{expression.clone()} {}
 
 template <typename T>
 T KleeneStar<T>::evaluate() const {
-    return *expr->evaluate();
+    return *expression_->evaluate();
 }
 
 template <typename T>
 std::string KleeneStar<T>::to_string() const {
-    return "(" + expr->to_string() + ")*";
+    return "(" + expression_->to_string() + ")*";
 }
 
 template <typename T>
 std::unique_ptr<Expression<T>> KleeneStar<T>::clone() const {
-    return std::make_unique<KleeneStar<T>>(*expr);
+    return std::make_unique<KleeneStar<T>>(*expression_);
 }
 
-#endif /* EXPRESSION_KLEENE_STAR_HPP */
+#endif // EXPRESSION_KLEENE_STAR_HPP

@@ -10,21 +10,22 @@ class Storage {
  public:
     using Id = std::size_t;
     using Container = std::map<Id, T>;
-    using ConstIterator = Container::const_iterator;
+    using SizeType = typename Container::size_type;
+    using ConstIterator = typename Container::const_iterator;
 
-    bool contains(Id) const;
+    bool contains(Id id) const noexcept;
 
-    Container::size_type size() const;
+    SizeType size() const noexcept;
 
-    T& get(Id);
-    const T& get(Id) const;
+    T& get(Id id);
+    const T& get(Id id) const;
 
-    Id add(T);
+    Id add(T object);
 
-    void remove(Id);
+    void remove(Id id);
 
-    ConstIterator begin() const;
-    ConstIterator end() const;
+    ConstIterator begin() const noexcept;
+    ConstIterator end() const noexcept;
 
  private:
     Container objects_;
@@ -32,28 +33,28 @@ class Storage {
 };
 
 template <typename T>
-bool Storage<T>::contains(Storage::Id id) const {
+bool Storage<T>::contains(Id id) const noexcept {
     return objects_.contains(id);
 }
 
 template <typename T>
-Storage<T>::Container::size_type Storage<T>::size() const {
+typename Storage<T>::SizeType Storage<T>::size() const noexcept {
     return objects_.size();
 }
 
 template <typename T>
-T& Storage<T>::get(Storage::Id id) {
+T& Storage<T>::get(Id id) {
     return objects_.at(id);
 }
 
 template <typename T>
-const T& Storage<T>::get(Storage::Id id) const {
+const T& Storage<T>::get(Id id) const {
     return objects_.at(id);
 }
 
 template <typename T>
-Storage<T>::Id Storage<T>::add(T object) {
-    const Storage::Id id = next_id_++;
+typename Storage<T>::Id Storage<T>::add(T object) {
+    const Id id{next_id_++};
 
     objects_.emplace(id, std::move(object));
 
@@ -66,12 +67,12 @@ void Storage<T>::remove(Storage::Id id) {
 }
 
 template <typename T>
-Storage<T>::ConstIterator Storage<T>::begin() const {
+typename Storage<T>::ConstIterator Storage<T>::begin() const noexcept {
     return objects_.begin();
 }
 
 template <typename T>
-Storage<T>::ConstIterator Storage<T>::end() const {
+typename Storage<T>::ConstIterator Storage<T>::end() const noexcept {
     return objects_.end();
 }
 

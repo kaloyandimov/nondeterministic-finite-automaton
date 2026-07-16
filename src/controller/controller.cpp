@@ -103,9 +103,9 @@ bool Controller::init_commands() {
                          ctrl.out_ << std::boolalpha << ctrl.storage_.get(std::stoull(args[0])).deterministic() << "\n";
                      });
 
-    register_command("recognise", "<id> <word>", "check if automaton recognises word", 2,
+    register_command("recognise", "<id> <word>", "check if automaton recognizes word", 2,
                      [](Controller& ctrl, const std::vector<std::string>& args) {
-                         ctrl.out_ << std::boolalpha << ctrl.storage_.get(std::stoull(args[0])).recognises(args[1]) << "\n";
+                         ctrl.out_ << std::boolalpha << ctrl.storage_.get(std::stoull(args[0])).recognizes(args[1]) << "\n";
                      });
 
     register_command("reg", "<regex>", "create automaton from regular expression", 1,

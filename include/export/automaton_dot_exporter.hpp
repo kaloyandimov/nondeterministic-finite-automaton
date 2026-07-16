@@ -16,4 +16,4 @@ class AutomatonDotExporter {
    static std::string escape(const std::string&);
 };
 
-#endif /* EXPORT_AUTOMATON_DOT_EXPORTER_HPP */
+#endif // EXPORT_AUTOMATON_DOT_EXPORTER_HPP

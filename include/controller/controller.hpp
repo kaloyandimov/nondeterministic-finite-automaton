@@ -59,4 +59,4 @@ class Controller {
     static void register_command(const std::string&, const std::string&, const std::string&, ulong, const Function&);
 };
 
-#endif /* CONTROLLER_CONTROLLER_HPP */
+#endif // CONTROLLER_CONTROLLER_HPP

@@ -4,8 +4,8 @@
 #include "exception/custom_exception.hpp"
 
 class InvalidExpressionException : public CustomException {
-   public:
-    InvalidExpressionException(const std::string& what_arg);
+ public:
+    using CustomException::CustomException;
 };
 
-#endif /* EXCEPTION_INVALID_EXPRESSION_EXCEPTION_HPP */
+#endif // EXCEPTION_INVALID_EXPRESSION_EXCEPTION_HPP

@@ -4,8 +4,8 @@
 #include "exception/custom_exception.hpp"
 
 class InvalidArgumentCountException : public CustomException {
-   public:
-    InvalidArgumentCountException(const std::string& what_arg);
+ public:
+    using CustomException::CustomException;
 };
 
-#endif /* EXCEPTION_INVALID_ARGUMENT_COUNT_EXCEPTION_HPP */
+#endif // EXCEPTION_INVALID_ARGUMENT_COUNT_EXCEPTION_HPP

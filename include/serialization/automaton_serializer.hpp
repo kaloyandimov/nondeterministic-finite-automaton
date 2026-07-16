@@ -4,7 +4,7 @@
 #include <istream>
 #include <ostream>
 
-#include "automaton/automaton.hpp"
+class Automaton;
 
 class AutomatonSerializer {
  public:
@@ -13,4 +13,4 @@ class AutomatonSerializer {
     void write(std::ostream&, const Automaton&) const;
 };
 
-#endif  // SERIALIZATION_AUTOMATON_SERIALIZER_HPP
+#endif // SERIALIZATION_AUTOMATON_SERIALIZER_HPP

@@ -96,4 +96,4 @@ std::unique_ptr<Expression<T>> parse(const std::string& infix) {
     return create<T>(shunting_yard(expand(infix)));
 }
 
-#endif /* CONTROLLER_PARSER_HPP */
+#endif // CONTROLLER_PARSER_HPP

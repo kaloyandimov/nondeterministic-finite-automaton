@@ -4,8 +4,8 @@
 #include "exception/custom_exception.hpp"
 
 class CommandNotFoundException : public CustomException {
-   public:
-    CommandNotFoundException(const std::string& what_arg);
+ public:
+    using CustomException::CustomException;
 };
 
-#endif /* EXCEPTION_COMMAND_NOT_FOUND_EXCEPTION_HPP */
+#endif // EXCEPTION_COMMAND_NOT_FOUND_EXCEPTION_HPP

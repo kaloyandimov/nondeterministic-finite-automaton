@@ -41,4 +41,4 @@ class Command {
     Function function_;
 };
 
-#endif /* CONTROLLER_COMMAND_HPP */
+#endif // CONTROLLER_COMMAND_HPP

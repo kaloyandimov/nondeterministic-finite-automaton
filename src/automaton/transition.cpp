@@ -1,35 +1,23 @@
 #include "automaton/transition.hpp"
 
-#include <compare>
+#include <tuple>
 
-Transition::Transition(char symbol, ID endpoint) : symbol_{symbol}, endpoint_{endpoint} {}
+#include "automaton/symbol.hpp"
 
-char Transition::symbol() const {
+Transition::Transition(char symbol, StateId destination) noexcept : symbol_{symbol}, destination_{destination} {}
+
+char Transition::symbol() const noexcept {
     return symbol_;
 }
 
-ID Transition::endpoint() const {
-    return endpoint_;
+StateId Transition::destination() const noexcept {
+    return destination_;
 }
 
-void Transition::set_symbol(char symbol) {
-    symbol_ = symbol;
+bool Transition::is_epsilon() const noexcept {
+    return symbol_ == epsilon_symbol;
 }
 
-void Transition::set_endpoint(ID endpoint) {
-    endpoint_ = endpoint;
-}
-
-bool Transition::epsilon() const {
-    return symbol_ == 'E';
-}
-
-bool Transition::operator<(const Transition& other) const {
-    auto cmp = endpoint_ <=> other.endpoint_;
-
-    return (cmp != 0 ? cmp : symbol_ <=> other.symbol_) < 0;
-}
-
-std::ostream& operator<<(std::ostream& out, const Transition& transition) {
-    return out << transition.symbol_ << " " << transition.endpoint_;
+std::strong_ordering Transition::operator<=>(const Transition& other) const noexcept {
+    return std::tie(destination_, symbol_) <=> std::tie(other.destination_, other.symbol_);
 }

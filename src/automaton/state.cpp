@@ -1,94 +1,54 @@
 #include "automaton/state.hpp"
 
 #include <algorithm>
-#include <array>
+#include <utility>
 
-State::State(bool accepting, ID id) : accepting_{accepting}, id_{id} {}
+#include "automaton/symbol.hpp"
 
-bool State::accepting() const {
-    return accepting_;
-}
+State::State(bool is_accepting) : is_accepting_{is_accepting} {}
 
-ID State::id() const {
-    return id_;
-}
-
-const std::vector<Transition>& State::transitions() const {
+const std::vector<Transition>& State::transitions() const noexcept {
     return transitions_;
 }
 
-void State::set_accepting(bool accepting) {
-    accepting_ = accepting;
+bool State::is_accepting() const noexcept {
+    return is_accepting_;
 }
 
-void State::set_id(ID id) {
-    id_ = id;
-}
-
-void State::set_transitions(const std::vector<Transition>& transitions) {
-    transitions_ = transitions;
-}
-
-bool State::deterministic() const {
-    std::array<bool, 256> seen;
-
-    for (const Transition& x : transitions_) {
-        if (x.epsilon()) {
-            return false;
-        }
-
-        unsigned char symbol{static_cast<unsigned char>(x.symbol())};
-
-        if (seen[symbol]) {
-            return false;
-        }
-
-        seen[symbol] = true;
-    }
-
-    return true;
-}
-
-ulong State::transition_count() const {
+std::vector<Transition>::size_type State::transition_count() const noexcept {
     return transitions_.size();
 }
 
-void State::add_transition(const Transition& x) {
-    auto pos{std::lower_bound(transitions_.begin(), transitions_.end(), x)};
+void State::add_transition(const Transition& transition) {
+    const auto position{std::ranges::lower_bound(transitions_, transition)};
 
-    if (pos == transitions_.end() || *pos != x) {
-        transitions_.insert(pos, x);
+    if (position == transitions_.end() || *position != transition) {
+        transitions_.insert(position, transition);
     }
 }
 
-void State::add_transition(char symbol, ID endpoint) {
+void State::add_transition(char symbol, StateId endpoint) {
     add_transition({symbol, endpoint});
 }
 
-void State::add_epsilon_transition(ID endpoint) {
-    add_transition({'E', endpoint});
+void State::add_epsilon_transition(StateId endpoint) {
+    add_transition({epsilon_symbol, endpoint});
 }
 
-void State::add_to_ids(ulong n) {
-    id_ += n;
+void State::set_transitions(std::vector<Transition> transitions) {
+    std::sort(transitions.begin(), transitions.end());
 
+    transitions.erase(std::unique(transitions.begin(), transitions.end()), transitions.end());
+
+    transitions_ = std::move(transitions);
+}
+
+void State::set_is_accepting(bool is_accepting) noexcept {
+    is_accepting_ = is_accepting;
+}
+
+void State::shift_ids(StateId offset) {
     for (Transition& transition : transitions_) {
-        transition.set_endpoint(transition.endpoint() + n);
+        transition.destination_ += offset;
     }
-}
-
-bool State::operator==(const State& other) const {
-    return id_ == other.id_;
-}
-
-bool State::operator<(const State& other) const {
-    return id_ < other.id_;
-}
-
-std::ostream& operator<<(std::ostream& out, const State& state) {
-    for (const Transition& x : state.transitions_) {
-        out << state.id_ << " " << x << "\n";
-    }
-
-    return out;
 }

@@ -129,13 +129,13 @@ bool is_valid(const std::string& infix) {
 }
 
 std::string expand(const std::string& infix) {
-    ulong size{infix.size()};
+    auto size{infix.size()};
     std::string result;
 
     result.reserve(size);
     result.push_back(infix[0]);
 
-    for (ulong i{1}; i < size; i++) {
+    for (auto i{1}; i < size; i++) {
         if (is_closing_token(infix[i - 1]) && is_opening_token(infix[i])) {
             result.push_back('.');
         }

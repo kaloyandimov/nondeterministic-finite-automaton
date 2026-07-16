@@ -1,58 +1,62 @@
 #include "serialization/automaton_serializer.hpp"
 
+#include <cstddef>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "automaton/automaton.hpp"
+
 Automaton AutomatonSerializer::read(std::istream& in) const {
-    ID initial_state_id;
-    ulong states_size{};
-    std::string input;
+    std::string alphabet;
+    std::size_t initial_state{0};
+    std::size_t states_size{0};
 
-    in >> input;
-
-    Automaton::Alphabet alphabet(input.begin(), input.end());
-
-    in >> initial_state_id >> states_size;
+    in >> alphabet >> initial_state >> states_size;
 
     std::vector<State> states;
+    bool accepting{false};
+
     states.reserve(states_size);
 
-    bool accepting{};
-
-    for (ulong i{0}; i < states_size; i++) {
+    for (std::size_t i{0}; i < states_size; i++) {
         in >> accepting;
 
-        states.emplace_back(accepting, i);
+        states.emplace_back(accepting);
     }
 
-    ulong transition_count{};
-    ID head{}, tail{};
+    std::size_t transition_count{0};
+    std::size_t head{0};
+    std::size_t tail{0};
     char symbol{};
 
     in >> transition_count;
 
-    for (ulong i{0}; i < transition_count; i++) {
+    for (std::size_t i{0}; i < transition_count; i++) {
         in >> head >> symbol >> tail;
 
         states[head].add_transition(symbol, tail);
     }
 
-    return Automaton{alphabet, std::move(states), initial_state_id};
+    return Automaton{{alphabet.begin(), alphabet.end()}, std::move(states), initial_state};
 }
 
 void AutomatonSerializer::write(std::ostream& out, const Automaton& automaton) const {
-    auto states = automaton.states();
-
     for (char c : automaton.alphabet()) {
         out << c;
     }
 
-    out << '\n' << automaton.initial_state() << " " << states.size() << '\n';
+    out << '\n' << automaton.initial_state() << ' ' << automaton.states().size() << '\n';
 
-    for (const State& state : states) {
-        out << state.accepting() << " ";
+    for (const State& state : automaton.states()) {
+        out << state.is_accepting() << ' ';
     }
 
     out << '\n' << automaton.transition_count() << '\n';
 
-    for (const State& state : states) {
-        out << state;
+    for (auto i{0}; i < automaton.states().size(); i++) {
+        for (const Transition& transition : automaton.states()[i].transitions()) {
+            out << i  << ' ' << transition.symbol() << ' ' << transition.destination();
+        }
     }
 }

@@ -7,12 +7,12 @@
 
 template <typename T>
 class Expression {
-   public:
+ public:
     Expression() = default;
-    Expression(const Expression<T>&) = delete;
-    Expression& operator=(const Expression<T>&) = delete;
-    Expression(Expression<T>&&) = default;
-    Expression& operator=(Expression<T>&&) = default;
+    Expression(const Expression<T>& other) = delete;
+    Expression& operator=(const Expression<T>& other) = delete;
+    Expression(Expression<T>&& other) = default;
+    Expression& operator=(Expression<T>&& other) = default;
     virtual ~Expression() = default;
 
     virtual T evaluate() const = 0;
@@ -21,8 +21,8 @@ class Expression {
 };
 
 template <typename T>
-std::ostream& operator<<(std::ostream& out, const Expression<T>& e) {
-    return out << e.to_string();
+std::ostream& operator<<(std::ostream& out, const Expression<T>& expression) {
+    return out << expression.to_string();
 }
 
-#endif /* EXPRESSION_EXPRESSION_HPP */
+#endif // EXPRESSION_EXPRESSION_HPP

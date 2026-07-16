@@ -1,13 +1,13 @@
 #ifndef MANAGER_FILE_MANAGER_HPP
 #define MANAGER_FILE_MANAGER_HPP
 
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <utility>
-#include <vector>
 
-#include "storage/storage.hpp"
 #include "serialization/serializer_for.hpp"
+#include "storage/storage.hpp"
 
 template <typename T, typename S>
 requires SerializerFor<S, T>
@@ -126,13 +126,13 @@ template <typename T, typename S>
 requires SerializerFor<S, T>
 void FileManager<T, S>::read(Storage<T>& storage, const std::filesystem::path& path) const {
     std::ifstream file{path};
-    int count = 0;
+    std::size_t count{0};
 
     file >> count;
 
-    for (int i = 0; i < count; i++) {
+    for (auto i{0}; i < count; i++) {
         storage.add(serializer_.read(file));
     }
 }
 
-#endif  // MANAGER_FILE_MANAGER_HPP
+#endif // MANAGER_FILE_MANAGER_HPP

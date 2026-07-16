@@ -1,30 +1,31 @@
 #ifndef AUTOMATON_TRANSITION_HPP
 #define AUTOMATON_TRANSITION_HPP
 
-#include <ostream>
+#include <compare>
 
-using ID = std::size_t;
+#include "automaton/state_id.hpp"
+
+class State;
+class Automaton;
 
 class Transition {
-   public:
-    Transition(char, ID);
+ public:
+    Transition(char symbol, StateId destination) noexcept;
 
-    char symbol() const;
-    ID endpoint() const;
+    char symbol() const noexcept;
+    StateId destination() const noexcept;
 
-    void set_symbol(char);
-    void set_endpoint(ID);
+    bool is_epsilon() const noexcept;
 
-    bool epsilon() const;
+    std::strong_ordering operator<=>(const Transition& transition) const noexcept;
+    bool operator==(const Transition& transition) const noexcept = default;
 
-    bool operator<(const Transition&) const;
-    bool operator==(const Transition&) const = default;
-
-    friend std::ostream& operator<<(std::ostream&, const Transition&);
-
-   private:
+ private:
     char symbol_;
-    ID endpoint_;
+    StateId destination_;
+
+    friend class State;
+    friend class Automaton;
 };
 
-#endif /* AUTOMATON_TRANSITION_HPP */
+#endif // AUTOMATON_TRANSITION_HPP

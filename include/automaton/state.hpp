@@ -1,43 +1,36 @@
 #ifndef AUTOMATON_STATE_HPP
 #define AUTOMATON_STATE_HPP
 
-#include <ostream>
 #include <vector>
 
+#include "automaton/state_id.hpp"
 #include "automaton/transition.hpp"
 
-using ulong = std::size_t;
+class Automaton;
 
 class State {
-   public:
-    explicit State(bool = false, ID = 0);
+ public:
+    explicit State(bool is_accepting = false);
 
-    bool accepting() const;
-    ID id() const;
-    const std::vector<Transition>& transitions() const;
+    const std::vector<Transition>& transitions() const noexcept;
+    bool is_accepting() const noexcept;
 
-    void set_accepting(bool);
-    void set_id(ID);
-    void set_transitions(const std::vector<Transition>&);
+    std::vector<Transition>::size_type transition_count() const noexcept;
 
-    bool deterministic() const;
+    void add_transition(const Transition& transition);
+    void add_transition(char symbol, StateId destination);
+    void add_epsilon_transition(StateId destination);
 
-    ulong transition_count() const;
-
-    void add_transition(const Transition&);
-    void add_transition(char, ID);
-    void add_epsilon_transition(ID);
-    void add_to_ids(ulong);
-
-    bool operator==(const State&) const;
-    bool operator<(const State&) const;
-
-    friend std::ostream& operator<<(std::ostream&, const State&);
-
-   private:
-    bool accepting_;
-    ID id_;
+ private:
     std::vector<Transition> transitions_;
+    bool is_accepting_;
+
+    void set_is_accepting(bool is_accepting) noexcept;
+    void set_transitions(std::vector<Transition> transitions);
+
+    void shift_ids(StateId offset);
+
+    friend class Automaton;
 };
 
-#endif /* AUTOMATON_STATE_HPP */
+#endif // AUTOMATON_STATE_HPP

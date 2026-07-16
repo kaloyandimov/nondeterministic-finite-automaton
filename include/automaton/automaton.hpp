@@ -4,51 +4,46 @@
 #include <ostream>
 #include <set>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "automaton/state.hpp"
+#include "automaton/state_id.hpp"
 #include "automaton/transition.hpp"
 
 class Automaton {
  public:
     using Alphabet = std::set<char>;
 
-    explicit Automaton(const Alphabet&, const std::vector<State>& = {}, ID initial_state = 0);
-    explicit Automaton(char, ID initial_state = 0);
+    explicit Automaton(char symbol);
+    Automaton(Alphabet alphabet, std::vector<State> states, StateId initial_state);
 
-    const std::set<char>& alphabet() const;
-    std::vector<State> states() const;
-    ID initial_state() const;
+    const Alphabet& alphabet() const noexcept;
+    const std::vector<State>& states() const noexcept;
+    StateId initial_state() const noexcept;
+
+    std::vector<Transition>::size_type transition_count() const noexcept;
 
     bool empty() const;
     bool deterministic() const;
-    bool recognises(const std::string&) const;
-
-    ulong transition_count() const;
+    bool recognizes(const std::string& word) const;
 
     void remove_unreachable_states();
     void remove_epsilons();
-    void normalise();
+    void normalize();
     void convert();
 
-    Automaton operator+(const Automaton&) const;
-    Automaton operator*(const Automaton&) const;
+    Automaton operator+(const Automaton& other) const;
+    Automaton operator*(const Automaton& other) const;
     Automaton operator*() const;
 
-    void print(std::ostream&) const;
+    void print(std::ostream& out) const;
 
  private:
     Alphabet alphabet_;
     std::vector<State> states_;
-    ID initial_state_;
+    StateId initial_state_;
 
-    void depth_first_search(std::vector<bool>&, ID = 0) const;
-
-    std::unordered_map<ID, ID> get_updated_ids() const;
-    Alphabet combine_alphabets(const Automaton&, const Automaton&) const;
-
-    void remove_epsilons_util(ID, ID, std::vector<bool>&, bool&);
+    static Alphabet combine_alphabets(const Alphabet& lhs, const Alphabet& rhs);
 };
 
-#endif /* AUTOMATON_AUTOMATON_HPP */
+#endif // AUTOMATON_AUTOMATON_HPP

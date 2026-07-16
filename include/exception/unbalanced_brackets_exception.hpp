@@ -4,8 +4,8 @@
 #include "exception/custom_exception.hpp"
 
 class UnbalancedBracketsException : public CustomException {
-   public:
-    UnbalancedBracketsException(const std::string& what_arg);
+ public:
+    using CustomException::CustomException;
 };
 
-#endif /* EXCEPTION_UNBALANCED_BRACKETS_EXCEPTION_HPP */
+#endif // EXCEPTION_UNBALANCED_BRACKETS_EXCEPTION_HPP
