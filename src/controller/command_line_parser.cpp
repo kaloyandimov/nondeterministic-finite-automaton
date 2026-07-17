@@ -1,5 +1,6 @@
 #include "controller/command_line_parser.hpp"
 
+#include <cctype>
 #include <cstddef>
 #include <string>
 #include <string_view>

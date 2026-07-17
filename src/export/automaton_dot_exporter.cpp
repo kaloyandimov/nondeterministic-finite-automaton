@@ -1,5 +1,6 @@
 #include "export/automaton_dot_exporter.hpp"
 
+#include <cstddef>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -17,7 +18,7 @@ std::string AutomatonDotExporter::to_string(const Automaton& automaton) const {
     out << "    __start [shape=point];\n";
     out << "    __start -> " << automaton.initial_state() << ";\n\n";
 
-    for (auto i{0}; i < automaton.states().size(); i++) {
+    for (std::size_t i{0}; i < automaton.states().size(); i++) {
         out << "    " << i;
 
         if (automaton.states()[i].is_accepting()) {
@@ -29,7 +30,7 @@ std::string AutomatonDotExporter::to_string(const Automaton& automaton) const {
 
     out << '\n';
 
-    for (auto i{0}; i < automaton.states().size(); i++) {
+    for (std::size_t i{0}; i < automaton.states().size(); i++) {
         for (const Transition& transition : automaton.states()[i].transitions()) {
             const std::string label{transition.is_epsilon() ? "ε" : std::string{transition.symbol()}};
 

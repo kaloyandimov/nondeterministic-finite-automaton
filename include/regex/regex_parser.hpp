@@ -49,7 +49,7 @@ std::unique_ptr<Expression<T>> RegexParser::build(std::string_view postfix) {
             std::unique_ptr<Expression<T>> expression{std::move(expressions.top())};
             expressions.pop();
 
-            expressions.push(std::make_unique<KleeneStar<T>>(*expression));
+            expressions.push(std::make_unique<KleeneStar<T>>(std::move(expression)));
         } else {
             std::unique_ptr<Expression<T>> rhs{std::move(expressions.top())};
             expressions.pop();
@@ -58,9 +58,9 @@ std::unique_ptr<Expression<T>> RegexParser::build(std::string_view postfix) {
             expressions.pop();
 
             if (token == '+') {
-                expressions.push(std::make_unique<Union<T>>(*lhs, *rhs));
+                expressions.push(std::make_unique<Union<T>>(std::move(lhs), std::move(rhs)));
             } else {
-                expressions.push(std::make_unique<Concatenation<T>>(*lhs, *rhs));
+                expressions.push(std::make_unique<Concatenation<T>>(std::move(lhs), std::move(rhs)));
             }
         }
     }

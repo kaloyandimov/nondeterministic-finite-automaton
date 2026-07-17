@@ -8,8 +8,15 @@
 #include <utility>
 #include <vector>
 
-Automaton::Automaton(char symbol) : alphabet_{symbol}, states_{State{false}, State{true}}, initial_state_{0} {
-    states_[0].add_transition(symbol, 1);
+#include "automaton/symbol.hpp"
+
+Automaton::Automaton(char symbol) : states_{State{false}, State{true}}, initial_state_{0} {
+    if (symbol == epsilon_symbol) {
+        states_[0].add_epsilon_transition(1);
+    } else {
+        alphabet_.insert(symbol);
+        states_[0].add_transition(symbol, 1);
+    }
 }
 
 Automaton::Automaton(Alphabet alphabet, std::vector<State> states, StateId initial_state) : alphabet_{std::move(alphabet)}, states_{std::move(states)}, initial_state_{initial_state} {}
@@ -27,7 +34,7 @@ StateId Automaton::initial_state() const noexcept {
 }
 
 std::size_t Automaton::transition_count() const noexcept {
-    auto count{0};
+    std::size_t count{0};
 
     for (const State& state : states_) {
         count += state.transition_count();
@@ -200,7 +207,7 @@ void Automaton::print(std::ostream& out) const {
 
     out << "\nInitial state: " << initial_state_ << "\nStates:\n";
 
-    for (auto i{0}; i < states_.size(); i++) {
+    for (std::size_t i{0}; i < states_.size(); i++) {
         out << "  " << i;
 
         if (i == initial_state_) {

@@ -96,8 +96,8 @@ void AutomatonService::export_dot(Id id, const std::filesystem::path& path) cons
     exporter_.export_to_file(storage_.get(id), path);
 }
 
-void AutomatonService::remove(Id id) {
-    storage_.remove(id);
+bool AutomatonService::remove(Id id) {
+    return storage_.remove(id);
 }
 
 void AutomatonService::clear() noexcept {

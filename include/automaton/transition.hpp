@@ -1,8 +1,6 @@
 #ifndef AUTOMATON_TRANSITION_HPP
 #define AUTOMATON_TRANSITION_HPP
 
-#include <compare>
-
 #include "automaton/state_id.hpp"
 
 class State;

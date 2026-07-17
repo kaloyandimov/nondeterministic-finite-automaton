@@ -1,12 +1,15 @@
 #ifndef EXPRESSION_CONCATENATION_HPP
 #define EXPRESSION_CONCATENATION_HPP
 
+#include <utility>
+
 #include "expression/expression.hpp"
 
 template <typename T>
 class Concatenation : public Expression<T> {
  public:
     Concatenation(const Expression<T>& lhs, const Expression<T>& rhs);
+    Concatenation(std::unique_ptr<Expression<T>> lhs, std::unique_ptr<Expression<T>> rhs) noexcept;
 
     T evaluate() const override;
     std::string to_string() const override;
@@ -19,6 +22,10 @@ class Concatenation : public Expression<T> {
 
 template <typename T>
 Concatenation<T>::Concatenation(const Expression<T>& lhs, const Expression<T>& rhs) : lhs_{lhs.clone()}, rhs_{rhs.clone()} {}
+
+template <typename T>
+Concatenation<T>::Concatenation(std::unique_ptr<Expression<T>> lhs, std::unique_ptr<Expression<T>> rhs) noexcept
+    : lhs_{std::move(lhs)}, rhs_{std::move(rhs)} {}
 
 template <typename T>
 T Concatenation<T>::evaluate() const {

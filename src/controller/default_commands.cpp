@@ -4,10 +4,12 @@
 #include <iomanip>
 #include <ios>
 #include <stdexcept>
+#include <string>
 #include <system_error>
 #include <vector>
 
 #include "application/automaton_service.hpp"
+#include "automaton/symbol.hpp"
 #include "controller/command.hpp"
 
 namespace {
@@ -40,13 +42,14 @@ CommandRegistry create_default_command_registry() {
 
     registry.add(Command{
         "list", "", "list all automaton IDs", 0, 0,
-        [](CommandContext& context, Command::Arguments arguments) {
-            if (context.service.ids().size() == 0) {
-                context.out << "No automata\n";
-                return;
+        [](CommandContext& context, Command::Arguments) {
+            const std::vector<AutomatonService::Id> ids{context.service.ids()};
+
+            if (ids.empty()) {
+                context.out << "No automata";
             }
 
-            for (const AutomatonService::Id id : context.service.ids()) {
+            for (const AutomatonService::Id id : ids) {
                 context.out << id << ' ';
             }
 
@@ -81,7 +84,9 @@ CommandRegistry create_default_command_registry() {
     registry.add(Command{
         "recognize", "<id> <word>", "check whether an automaton recognizes a word", 2, 2,
         [](CommandContext& context, Command::Arguments arguments) {
-            context.out << boolean_text(context.service.recognizes(parse_id(arguments[0]), arguments[1])) << '\n';
+            const std::string word{arguments[1] == std::string(1, epsilon_symbol) ? "" : arguments[1]};
+
+            context.out << boolean_text(context.service.recognizes(parse_id(arguments[0]), word)) << '\n';
         }});
 
     registry.add(Command{
@@ -147,8 +152,7 @@ CommandRegistry create_default_command_registry() {
     registry.add(Command{
         "remove", "<id>", "remove an automaton from the workspace", 1, 1,
         [](CommandContext& context, Command::Arguments arguments) {
-            context.service.remove(parse_id(arguments[0]));
-            context.out << "Automaton removed\n";
+            context.out << (context.service.remove(parse_id(arguments[0])) ? "Automaton removed\n" : "Invalid ID\n");
         }});
 
     registry.add(Command{

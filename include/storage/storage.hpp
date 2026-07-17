@@ -21,7 +21,7 @@ class Storage {
     const T& get(Id id) const;
 
     Id add(T object);
-    void remove(Id id);
+    bool remove(Id id);
     void clear() noexcept;
 
     ConstIterator begin() const noexcept;
@@ -67,8 +67,8 @@ typename Storage<T>::Id Storage<T>::add(T object) {
 }
 
 template <typename T>
-void Storage<T>::remove(Storage::Id id) {
-    objects_.erase(id);
+bool Storage<T>::remove(Storage::Id id) {
+    return objects_.erase(id) == 1;
 }
 
 template <typename T>

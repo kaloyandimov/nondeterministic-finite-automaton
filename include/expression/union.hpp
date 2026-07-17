@@ -1,12 +1,15 @@
 #ifndef EXPRESSION_UNION_HPP
 #define EXPRESSION_UNION_HPP
 
+#include <utility>
+
 #include "expression/expression.hpp"
 
 template <typename T>
 class Union : public Expression<T> {
  public:
     Union(const Expression<T>& lhs, const Expression<T>& rhs);
+    Union(std::unique_ptr<Expression<T>> lhs, std::unique_ptr<Expression<T>> rhs) noexcept;
 
     T evaluate() const override;
     std::string to_string() const override;
@@ -19,6 +22,9 @@ class Union : public Expression<T> {
 
 template <typename T>
 Union<T>::Union(const Expression<T>& lhs, const Expression<T>& rhs) : lhs_{lhs.clone()}, rhs_{rhs.clone()} {}
+
+template <typename T>
+Union<T>::Union(std::unique_ptr<Expression<T>> lhs, std::unique_ptr<Expression<T>> rhs) noexcept : lhs_{std::move(lhs)}, rhs_{std::move(rhs)} {}
 
 template <typename T>
 T Union<T>::evaluate() const {

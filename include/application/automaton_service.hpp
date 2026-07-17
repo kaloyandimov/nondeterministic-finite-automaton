@@ -39,7 +39,7 @@ class AutomatonService {
     void save(Id id, const std::filesystem::path& path) const;
     void export_dot(Id id, const std::filesystem::path& path) const;
 
-    void remove(Id id);
+    bool remove(Id id);
     void clear() noexcept;
 
  private:

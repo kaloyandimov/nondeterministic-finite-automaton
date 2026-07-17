@@ -61,7 +61,7 @@ void AutomatonSerializer::write(std::ostream& out, const Automaton& automaton) c
     out << '\n';
     out << automaton.transition_count() << '\n';
 
-    for (auto i{0}; i < automaton.states().size(); i++) {
+    for (std::size_t i{0}; i < automaton.states().size(); i++) {
         for (const Transition& transition : automaton.states()[i].transitions()) {
             out << i  << ' ' << transition.symbol() << ' ' << transition.destination() << '\n';
         }
