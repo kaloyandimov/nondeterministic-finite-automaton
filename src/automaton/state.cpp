@@ -20,7 +20,7 @@ std::vector<Transition>::size_type State::transition_count() const noexcept {
 }
 
 void State::add_transition(const Transition& transition) {
-    const auto position{std::ranges::lower_bound(transitions_, transition)};
+    const auto position{std::lower_bound(transitions_.begin(), transitions_.end(), transition)};
 
     if (position == transitions_.end() || *position != transition) {
         transitions_.insert(position, transition);

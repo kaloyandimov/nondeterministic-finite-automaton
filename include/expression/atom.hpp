@@ -26,7 +26,7 @@ T Atom<T>::evaluate() const {
 
 template <typename T>
 std::string Atom<T>::to_string() const {
-    return std::string{1, symbol_};
+    return std::string(1, symbol_);
 }
 
 template <typename T>

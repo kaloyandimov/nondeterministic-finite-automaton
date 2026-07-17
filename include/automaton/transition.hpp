@@ -17,7 +17,7 @@ class Transition {
 
     bool is_epsilon() const noexcept;
 
-    std::strong_ordering operator<=>(const Transition& transition) const noexcept;
+    bool operator<(const Transition& transition) const noexcept;
     bool operator==(const Transition& transition) const noexcept = default;
 
  private:

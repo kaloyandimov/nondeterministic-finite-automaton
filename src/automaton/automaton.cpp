@@ -8,8 +8,7 @@
 #include <utility>
 #include <vector>
 
-Automaton::Automaton(char symbol) : alphabet_{}, states_{State{false}, State{true}}, initial_state_{0} {
-    alphabet_.insert(symbol);
+Automaton::Automaton(char symbol) : alphabet_{symbol}, states_{State{false}, State{true}}, initial_state_{0} {
     states_[0].add_transition(symbol, 1);
 }
 
@@ -27,7 +26,7 @@ StateId Automaton::initial_state() const noexcept {
     return initial_state_;
 }
 
-std::vector<Transition>::size_type Automaton::transition_count() const noexcept {
+std::size_t Automaton::transition_count() const noexcept {
     auto count{0};
 
     for (const State& state : states_) {
@@ -66,27 +65,23 @@ bool Automaton::empty() const {
 
 bool Automaton::deterministic() const {
     for (const State& state : states_) {
+        std::set<char> used_symbols;
+
         for (const Transition& transition : state.transitions_) {
-            if (transition.is_epsilon()) {
+            if (transition.is_epsilon() || !used_symbols.insert(transition.symbol_).second) {
                 return false;
             }
         }
 
-        for (char symbol : alphabet_) {
-            const auto count{std::ranges::count_if(state.transitions_, [symbol](const Transition& transition) {
-                return transition.symbol_ == symbol;
-            })};
-
-            if (count != 1) {
-                return false;
-            }
+        if (used_symbols.size() != alphabet_.size()) {
+            return false;
         }
     }
 
     return true;
 }
 
-bool Automaton::recognizes(const std::string& word) const {
+bool Automaton::recognizes(std::string_view word) const {
     std::set<std::pair<StateId, std::string::size_type>> visited;
     std::stack<std::pair<StateId, std::string::size_type>> pending;
     pending.push({initial_state_, 0});
@@ -113,6 +108,122 @@ bool Automaton::recognizes(const std::string& word) const {
     }
 
     return false;
+}
+
+Automaton Automaton::determinized() const {
+    Automaton result{*this};
+    result.determinize();
+
+    return result;
+}
+
+Automaton Automaton::operator+(const Automaton& other) const {
+    constexpr StateId new_initial_count{1};
+    const StateId lhs_offset{new_initial_count};
+    const StateId rhs_offset{new_initial_count + states_.size()};
+
+    std::vector<State> new_states;
+    new_states.reserve(new_initial_count + states_.size() + other.states_.size());
+
+    State new_initial{false};
+    new_initial.add_epsilon_transition(initial_state_ + lhs_offset);
+    new_initial.add_epsilon_transition(other.initial_state_ + rhs_offset);
+    new_states.push_back(std::move(new_initial));
+
+    for (State state : states_) {
+        state.shift_ids(lhs_offset);
+        new_states.push_back(std::move(state));
+    }
+
+    for (State state : other.states_) {
+        state.shift_ids(rhs_offset);
+        new_states.push_back(std::move(state));
+    }
+
+    return Automaton{combine_alphabets(alphabet_, other.alphabet_), std::move(new_states), 0};
+}
+
+Automaton Automaton::operator*(const Automaton& other) const {
+    const StateId rhs_offset{states_.size()};
+    const StateId rhs_initial{other.initial_state_ + rhs_offset};
+
+    std::vector<State> new_states;
+    new_states.reserve(states_.size() + other.states_.size());
+
+    for (State state : states_) {
+        if (state.is_accepting_) {
+            state.is_accepting_ = false;
+            state.add_epsilon_transition(rhs_initial);
+        }
+
+        new_states.push_back(std::move(state));
+    }
+
+    for (State state : other.states_) {
+        state.shift_ids(rhs_offset);
+        new_states.push_back(std::move(state));
+    }
+
+    return Automaton{combine_alphabets(alphabet_, other.alphabet_), std::move(new_states), initial_state_};
+}
+
+Automaton Automaton::operator*() const {
+    constexpr StateId offset{1};
+    const StateId old_initial{initial_state_ + offset};
+
+    std::vector<State> new_states;
+    new_states.reserve(states_.size() + offset);
+
+    State new_initial{true};
+    new_initial.add_epsilon_transition(old_initial);
+    new_states.push_back(std::move(new_initial));
+
+    for (State state : states_) {
+        state.shift_ids(offset);
+
+        if (state.is_accepting_) {
+            state.add_epsilon_transition(old_initial);
+        }
+
+        new_states.push_back(std::move(state));
+    }
+
+    return Automaton{alphabet_, std::move(new_states), 0};
+}
+
+void Automaton::print(std::ostream& out) const {
+    out << "Alphabet: ";
+
+    for (const char symbol : alphabet_) {
+        out << symbol;
+    }
+
+    out << "\nInitial state: " << initial_state_ << "\nStates:\n";
+
+    for (auto i{0}; i < states_.size(); i++) {
+        out << "  " << i;
+
+        if (i == initial_state_) {
+            out << " [initial]";
+        }
+
+        if (states_[i].is_accepting_) {
+            out << " [accepting]";
+        }
+
+        out << '\n';
+
+        for (const Transition& transition : states_[i].transitions_) {
+            out << "  " << i << " --" << transition.symbol_ << "--> " << transition.destination_ << '\n';
+        }
+    }
+}
+
+Automaton::Alphabet Automaton::combine_alphabets(const Alphabet& lhs, const Alphabet& rhs) {
+    Alphabet result{lhs};
+    result.insert(rhs.begin(), rhs.end());
+
+    return result;
 }
 
 void Automaton::remove_epsilons() {
@@ -143,8 +254,8 @@ void Automaton::remove_epsilons() {
             }
         }
 
-        bool is_accepting{false};
         std::vector<Transition> transitions;
+        bool is_accepting{false};
 
         for (const StateId current : closure) {
             is_accepting = is_accepting || original[current].is_accepting_;
@@ -199,7 +310,6 @@ void Automaton::remove_unreachable_states() {
         }
 
         State state{states_[old_id]};
-
         std::vector<Transition> transitions{state.transitions_};
 
         for (Transition& transition : transitions) {
@@ -253,7 +363,7 @@ void Automaton::normalize() {
     std::vector<State> reordered;
     reordered.reserve(states_.size());
 
-    for (StateId old_id : order) {
+    for (const StateId old_id : order) {
         State state{states_[old_id]};
         std::vector<Transition> transitions{state.transitions_};
 
@@ -269,7 +379,7 @@ void Automaton::normalize() {
     states_ = std::move(reordered);
 }
 
-void Automaton::convert() {
+void Automaton::determinize() {
     remove_epsilons();
     remove_unreachable_states();
     normalize();
@@ -325,111 +435,4 @@ void Automaton::convert() {
 
     states_ = std::move(deterministic_states);
     initial_state_ = 0;
-}
-
-Automaton Automaton::operator+(const Automaton& other) const {
-    constexpr StateId new_initial_count{1};
-    const StateId lhs_offset{new_initial_count};
-    const StateId rhs_offset{new_initial_count + states_.size()};
-    std::vector<State> new_states;
-    new_states.reserve(new_initial_count + states_.size() + other.states_.size());
-
-    State new_initial{false};
-    new_initial.add_epsilon_transition(initial_state_ + lhs_offset);
-    new_initial.add_epsilon_transition(other.initial_state_ + rhs_offset);
-    new_states.push_back(std::move(new_initial));
-
-    for (State state : states_) {
-        state.shift_ids(lhs_offset);
-        new_states.push_back(std::move(state));
-    }
-
-    for (State state : other.states_) {
-        state.shift_ids(rhs_offset);
-        new_states.push_back(std::move(state));
-    }
-
-    return Automaton{combine_alphabets(this->alphabet_, other.alphabet_), std::move(new_states), 0};
-}
-
-Automaton Automaton::operator*(const Automaton& other) const {
-    const StateId rhs_offset{states_.size()};
-    const StateId rhs_initial{other.initial_state_ + rhs_offset};
-    std::vector<State> new_states;
-    new_states.reserve(states_.size() + other.states_.size());
-
-    for (State state : states_) {
-        if (state.is_accepting_) {
-            state.is_accepting_ = false;
-            state.add_epsilon_transition(rhs_initial);
-        }
-
-        new_states.push_back(std::move(state));
-    }
-
-    for (State state : other.states_) {
-        state.shift_ids(rhs_offset);
-        new_states.push_back(std::move(state));
-    }
-
-    return Automaton{combine_alphabets(this->alphabet_, other.alphabet_), std::move(new_states), initial_state_};
-}
-
-Automaton Automaton::operator*() const {
-    constexpr StateId offset{1};
-    const StateId old_initial{initial_state_ + offset};
-    std::vector<State> new_states;
-    new_states.reserve(states_.size() + offset);
-
-    State new_initial{true};
-    new_initial.add_epsilon_transition(old_initial);
-    new_states.push_back(std::move(new_initial));
-
-    for (State state : states_) {
-        state.shift_ids(offset);
-
-        if (state.is_accepting_) {
-            state.add_epsilon_transition(old_initial);
-        }
-
-        new_states.push_back(std::move(state));
-    }
-
-    return Automaton{alphabet_, std::move(new_states), 0};
-}
-
-void Automaton::print(std::ostream& out) const {
-    out << "Alphabet: ";
-
-    for (const char symbol : alphabet_) {
-        out << symbol;
-    }
-
-    out << "\nInitial state: " << initial_state_ << "\nStates:\n";
-
-    for (auto i{0}; i < states_.size(); i++) {
-        out << "  " << i;
-
-        if (i == initial_state_) {
-            out << " [initial]";
-        }
-
-        if (states_[i].is_accepting_) {
-            out << " [accepting]";
-        }
-
-        out << '\n';
-
-        for (const Transition& transition : states_[i].transitions_) {
-            out << "  " << i << " --" << transition.symbol_ << "--> " << transition.destination_ << '\n';
-        }
-    }
-}
-
-Automaton::Alphabet Automaton::combine_alphabets(const Alphabet& lhs, const Alphabet& rhs) {
-    Alphabet result{lhs};
-
-    result.insert(rhs.begin(), rhs.end());
-
-    return result;
 }

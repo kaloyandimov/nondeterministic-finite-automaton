@@ -1,51 +1,59 @@
 #include "controller/command.hpp"
 
-Command::Command(const std::string& name, const std::string& args, const std::string& usage, ulong arg_count, const Function& function) : name_{name}, args_{args}, usage_{usage}, arg_count_{arg_count}, function_{function} {}
+#include <utility>
 
-const std::string& Command::name() const {
+#include "exception/invalid_argument_count_exception.hpp"
+
+Command::Command(
+    std::string name,
+    std::string arguments,
+    std::string description,
+    std::size_t min_arguments,
+    std::size_t max_arguments,
+    Handler handler)
+    : name_{std::move(name)},
+      arguments_{std::move(arguments)},
+      description_{std::move(description)},
+      min_arguments_{min_arguments},
+      max_arguments_{max_arguments},
+      handler_{std::move(handler)} {}
+
+const std::string& Command::name() const noexcept {
     return name_;
 }
 
-const std::string& Command::args() const {
-    return args_;
+const std::string& Command::arguments() const noexcept {
+    return arguments_;
 }
 
-const std::string& Command::usage() const {
-    return usage_;
+const std::string& Command::description() const noexcept {
+    return description_;
 }
 
-ulong Command::arg_count() const {
-    return arg_count_;
+std::size_t Command::min_arguments() const noexcept {
+    return min_arguments_;
 }
 
-bool Command::valid() const {
-    return !name_.empty();
+std::size_t Command::max_arguments() const noexcept {
+    return max_arguments_;
 }
 
 std::string Command::title() const {
-    return name_ + (arg_count_ == 0 ? "" : " " + args_);
+    return arguments_.empty() ? name_ : name_ + ' ' + arguments_;
 }
 
-void Command::execute(Controller& ctrl, const std::vector<std::string>& args) const {
-    if (args.size() < arg_count_) {
+void Command::execute(CommandContext& context, Arguments arguments) const {
+    if (arguments.size() < min_arguments_) {
         throw InvalidArgumentCountException{"Too few arguments"};
     }
 
-    if (args.size() > arg_count_) {
+    if (arguments.size() > max_arguments_) {
         throw InvalidArgumentCountException{"Too many arguments"};
     }
 
-    function_(ctrl, args);
+    handler_(context, arguments);
 }
 
-Command::operator bool() const {
-    return valid();
-}
-
-void Command::operator()(Controller& ctrl, const std::vector<std::string>& args) const {
-    execute(ctrl, args);
-}
-
-std::ostream& operator<<(std::ostream& out, const Command& cmd) {
-    return out << cmd.title() << cmd.usage();
+std::ostream& operator<<(std::ostream& out, const Command& command) {
+    return out << command.title() << " - " << command.description();
 }

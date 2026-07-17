@@ -18,6 +18,6 @@ bool Transition::is_epsilon() const noexcept {
     return symbol_ == epsilon_symbol;
 }
 
-std::strong_ordering Transition::operator<=>(const Transition& other) const noexcept {
-    return std::tie(destination_, symbol_) <=> std::tie(other.destination_, other.symbol_);
+bool Transition::operator<(const Transition& other) const noexcept {
+    return std::tie(destination_, symbol_) < std::tie(other.destination_, other.symbol_);
 }

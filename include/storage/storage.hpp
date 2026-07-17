@@ -13,16 +13,16 @@ class Storage {
     using SizeType = typename Container::size_type;
     using ConstIterator = typename Container::const_iterator;
 
-    bool contains(Id id) const noexcept;
-
+    bool empty() const noexcept;
     SizeType size() const noexcept;
+    bool contains(Id id) const noexcept;
 
     T& get(Id id);
     const T& get(Id id) const;
 
     Id add(T object);
-
     void remove(Id id);
+    void clear() noexcept;
 
     ConstIterator begin() const noexcept;
     ConstIterator end() const noexcept;
@@ -33,13 +33,18 @@ class Storage {
 };
 
 template <typename T>
-bool Storage<T>::contains(Id id) const noexcept {
-    return objects_.contains(id);
+bool Storage<T>::empty() const noexcept {
+    return objects_.empty();
 }
 
 template <typename T>
 typename Storage<T>::SizeType Storage<T>::size() const noexcept {
     return objects_.size();
+}
+
+template <typename T>
+bool Storage<T>::contains(Id id) const noexcept {
+    return objects_.contains(id);
 }
 
 template <typename T>
@@ -64,6 +69,12 @@ typename Storage<T>::Id Storage<T>::add(T object) {
 template <typename T>
 void Storage<T>::remove(Storage::Id id) {
     objects_.erase(id);
+}
+
+template <typename T>
+void Storage<T>::clear() noexcept {
+    objects_.clear();
+    next_id_ = 1;
 }
 
 template <typename T>

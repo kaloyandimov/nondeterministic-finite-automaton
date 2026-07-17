@@ -8,9 +8,9 @@ class Automaton;
 
 class AutomatonSerializer {
  public:
-    Automaton read(std::istream&) const;
+    Automaton read(std::istream& in) const;
 
-    void write(std::ostream&, const Automaton&) const;
+    void write(std::ostream& out, const Automaton& automaton) const;
 };
 
 #endif // SERIALIZATION_AUTOMATON_SERIALIZER_HPP

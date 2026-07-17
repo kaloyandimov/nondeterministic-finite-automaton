@@ -4,41 +4,51 @@
 #include <cstddef>
 #include <functional>
 #include <ostream>
+#include <span>
 #include <string>
-#include <vector>
+#include <utility>
 
-#include "exception/invalid_argument_count_exception.hpp"
+class AutomatonService;
+class CommandRegistry;
 
-class Controller;
-
-using ulong = std::size_t;
-using Function = std::function<void(Controller&, std::vector<std::string>)>;
+struct CommandContext {
+    AutomatonService& service;
+    const CommandRegistry& registry;
+    std::ostream& out;
+    bool& running;
+};
 
 class Command {
-   public:
-    Command() = default;
-    Command(const std::string&, const std::string&, const std::string&, ulong, const Function&);
+ public:
+    using Arguments = std::span<const std::string>;
+    using Handler = std::function<void(CommandContext&, Arguments)>;
 
-    const std::string& name() const;
-    const std::string& args() const;
-    const std::string& usage() const;
-    ulong arg_count() const;
+    Command(
+        std::string name,
+        std::string arguments,
+        std::string description,
+        std::size_t min_arguments,
+        std::size_t max_arguments,
+        Handler handler);
 
-    bool valid() const;
+    const std::string& name() const noexcept;
+    const std::string& arguments() const noexcept;
+    const std::string& description() const noexcept;
+    std::size_t min_arguments() const noexcept;
+    std::size_t max_arguments() const noexcept;
+
     std::string title() const;
-    void execute(Controller&, const std::vector<std::string>&) const;
+    void execute(CommandContext& context, Arguments arguments) const;
 
-    operator bool() const;
-    void operator()(Controller&, const std::vector<std::string>&) const;
-
-    friend std::ostream& operator<<(std::ostream&, const Command&);
-
-   private:
+ private:
     std::string name_;
-    std::string args_;
-    std::string usage_;
-    ulong arg_count_;
-    Function function_;
+    std::string arguments_;
+    std::string description_;
+    std::size_t min_arguments_;
+    std::size_t max_arguments_;
+    Handler handler_;
 };
+
+std::ostream& operator<<(std::ostream& out, const Command& command);
 
 #endif // CONTROLLER_COMMAND_HPP
