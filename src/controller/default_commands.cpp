@@ -76,6 +76,12 @@ CommandRegistry create_default_command_registry() {
         }});
 
     registry.add(Command{
+        "finite", "<id>", "check whether the language is finite", 1, 1,
+        [](CommandContext& context, Command::Arguments arguments) {
+            context.out << boolean_text(context.service.finite(parse_id(arguments[0]))) << '\n';
+        }});
+
+    registry.add(Command{
         "deterministic", "<id>", "check whether an automaton is deterministic", 1, 1,
         [](CommandContext& context, Command::Arguments arguments) {
             context.out << boolean_text(context.service.deterministic(parse_id(arguments[0]))) << '\n';

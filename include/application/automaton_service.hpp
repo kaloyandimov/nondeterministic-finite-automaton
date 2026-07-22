@@ -32,6 +32,7 @@ class AutomatonService {
     Id minimize(Id id);
 
     bool empty(Id id) const;
+    bool finite(Id id) const;
     bool deterministic(Id id) const;
     bool recognizes(Id id, std::string_view word) const;
 

@@ -70,6 +70,89 @@ bool Automaton::empty() const {
     return true;
 }
 
+bool Automaton::finite() const {
+    Automaton automaton{*this};
+
+    automaton.remove_epsilons();
+    automaton.remove_unreachable_states();
+
+    const auto& states{automaton.states_};
+
+    if (states.empty()) {
+        return true;
+    }
+
+    std::vector<std::vector<StateId>> reversed(states.size());
+
+    for (StateId source{0}; source < states.size(); source ++) {
+        for (const Transition& transition : states[source].transitions()) {
+            reversed[transition.destination()].push_back(source);
+        }
+    }
+
+    std::vector<bool> can_reach_accepting(states.size(), false);
+    std::queue<StateId> pending;
+
+    for (StateId id{0}; id < states.size(); ++id) {
+        if (states[id].is_accepting()) {
+            can_reach_accepting[id] = true;
+            pending.push(id);
+        }
+    }
+
+    while (!pending.empty()) {
+        const StateId current{pending.front()};
+        pending.pop();
+
+        for (const StateId predecessor : reversed[current]) {
+            if (can_reach_accepting[predecessor]) {
+                continue;
+            }
+
+            can_reach_accepting[predecessor] = true;
+            pending.push(predecessor);
+        }
+    }
+
+    enum class VisitState {
+        unvisited,
+        visiting,
+        visited
+    };
+
+    std::vector<VisitState> visit_state(states.size(), VisitState::unvisited);
+
+    const auto contains_useful_cycle = [&](const auto& self, StateId current) -> bool {
+            if (!can_reach_accepting[current]) {
+                return false;
+            }
+
+            visit_state[current] = VisitState::visiting;
+
+            for (const Transition& transition : states[current].transitions()) {
+                const StateId destination{transition.destination()};
+
+                if (!can_reach_accepting[destination]) {
+                    continue;
+                }
+
+                if (visit_state[destination] == VisitState::visiting) {
+                    return true;
+                }
+
+                if (visit_state[destination] == VisitState::unvisited && self(self, destination)) {
+                    return true;
+                }
+            }
+
+            visit_state[current] = VisitState::visited;
+            
+            return false;
+        };
+
+    return !contains_useful_cycle(contains_useful_cycle, automaton.initial_state_);
+}
+
 bool Automaton::deterministic() const {
     for (const State& state : states_) {
         std::set<char> used_symbols;

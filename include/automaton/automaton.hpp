@@ -25,6 +25,7 @@ class Automaton {
     std::size_t transition_count() const noexcept;
 
     bool empty() const;
+    bool finite() const;
     bool deterministic() const;
     bool recognizes(std::string_view word) const;
 

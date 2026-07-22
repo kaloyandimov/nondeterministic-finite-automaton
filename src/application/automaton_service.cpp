@@ -60,6 +60,10 @@ bool AutomatonService::empty(Id id) const {
     return storage_.get(id).empty();
 }
 
+bool AutomatonService::finite(Id id) const {
+    return storage_.get(id).finite();
+}
+
 bool AutomatonService::deterministic(Id id) const {
     return storage_.get(id).deterministic();
 }
