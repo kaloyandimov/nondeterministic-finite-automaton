@@ -124,6 +124,13 @@ Automaton Automaton::determinized() const {
     return result;
 }
 
+Automaton Automaton::minimized() const {
+    Automaton result{*this};
+    result.minimize();
+
+    return result;
+}
+
 Automaton Automaton::operator+(const Automaton& other) const {
     constexpr StateId new_initial_count{1};
     const StateId lhs_offset{new_initial_count};
@@ -442,4 +449,80 @@ void Automaton::determinize() {
 
     states_ = std::move(deterministic_states);
     initial_state_ = 0;
+}
+
+void Automaton::minimize() {
+    determinize();
+
+    const auto transition_endpoint = [this](StateId state_id, char symbol) {
+        const auto& transitions{states_[state_id].transitions_};
+        const auto position{std::find_if(transitions.begin(), transitions.end(), [symbol](const Transition& transition) {
+            return transition.symbol_ == symbol;
+        })};
+
+        if (position == transitions.end()) {
+            throw std::logic_error{"Complete DFA invariant violated"};
+        }
+
+        return position->destination_;
+    };
+
+    std::vector<std::size_t> partition(states_.size());
+    for (StateId id{0}; id < states_.size(); ++id) {
+        partition[id] = states_[id].is_accepting_ ? 1U : 0U;
+    }
+
+    while (true) {
+        std::map<std::vector<std::size_t>, std::size_t> class_ids;
+        std::vector<std::size_t> refined_partition(states_.size());
+
+        for (StateId id{0}; id < states_.size(); ++id) {
+            std::vector<std::size_t> signature;
+            signature.reserve(alphabet_.size() + 1);
+            signature.push_back(states_[id].is_accepting_ ? 1U : 0U);
+
+            for (const char symbol : alphabet_) {
+                signature.push_back(partition[transition_endpoint(id, symbol)]);
+            }
+
+            const auto [position, inserted]{class_ids.try_emplace(std::move(signature), class_ids.size())};
+            static_cast<void>(inserted);
+            refined_partition[id] = position->second;
+        }
+
+        if (refined_partition == partition) {
+            break;
+        }
+
+        partition = std::move(refined_partition);
+    }
+
+    const std::size_t class_count{*std::max_element(partition.begin(), partition.end()) + 1};
+    std::vector<StateId> representatives(class_count, states_.size());
+
+    for (StateId id{0}; id < states_.size(); ++id) {
+        const std::size_t class_id{partition[id]};
+        if (representatives[class_id] == states_.size()) {
+            representatives[class_id] = id;
+        }
+    }
+
+    std::vector<State> minimal_states;
+    minimal_states.reserve(class_count);
+
+    for (std::size_t class_id{0}; class_id < class_count; ++class_id) {
+        const StateId representative{representatives[class_id]};
+        State state{states_[representative].is_accepting_};
+
+        for (const char symbol : alphabet_) {
+            state.add_transition(symbol, partition[transition_endpoint(representative, symbol)]);
+        }
+
+        minimal_states.push_back(std::move(state));
+    }
+
+    initial_state_ = partition[initial_state_];
+    states_ = std::move(minimal_states);
+
+    normalize();
 }

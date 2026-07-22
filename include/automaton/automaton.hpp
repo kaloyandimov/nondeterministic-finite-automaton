@@ -29,6 +29,7 @@ class Automaton {
     bool recognizes(std::string_view word) const;
 
     Automaton determinized() const;
+    Automaton minimized() const;
 
     Automaton operator+(const Automaton& other) const;
     Automaton operator*(const Automaton& other) const;
@@ -47,6 +48,7 @@ class Automaton {
     void remove_epsilons();
     void normalize();
     void determinize();
+    void minimize();
 };
 
 #endif // AUTOMATON_AUTOMATON_HPP

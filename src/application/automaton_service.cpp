@@ -52,6 +52,10 @@ AutomatonService::Id AutomatonService::determinize(Id id) {
     return storage_.add(storage_.get(id).determinized());
 }
 
+AutomatonService::Id AutomatonService::minimize(Id id) {
+    return storage_.add(storage_.get(id).minimized());
+}
+
 bool AutomatonService::empty(Id id) const {
     return storage_.get(id).empty();
 }

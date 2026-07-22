@@ -120,6 +120,12 @@ CommandRegistry create_default_command_registry() {
         }});
 
     registry.add(Command{
+        "minimize", "<id>", "minimize an NFA", 1, 1,
+        [](CommandContext& context, Command::Arguments arguments) {
+            print_created(context.out, context.service.minimize(parse_id(arguments[0])));
+        }});
+
+    registry.add(Command{
         "load", "<filename>", "load automata into the current workspace", 1, 1,
         [](CommandContext& context, Command::Arguments arguments) {
             const std::vector<AutomatonService::Id> ids{context.service.load(arguments[0])};

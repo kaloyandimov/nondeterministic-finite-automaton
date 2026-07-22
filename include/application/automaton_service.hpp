@@ -29,6 +29,7 @@ class AutomatonService {
     Id concatenate(Id lhs, Id rhs);
     Id kleene_star(Id id);
     Id determinize(Id id);
+    Id minimize(Id id);
 
     bool empty(Id id) const;
     bool deterministic(Id id) const;
