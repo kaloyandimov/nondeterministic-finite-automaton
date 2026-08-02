@@ -1,5 +1,7 @@
 # Nondeterministic Finite Automaton :robot:
 
+[![CMake Tests](https://github.com/kaloyandimov/nondeterministic-finite-automaton/actions/workflows/tests.yml/badge.svg)](https://github.com/kaloyandimov/nondeterministic-finite-automaton/actions/workflows/tests.yml)
+
 This is an interactive command-line tool that empowers you to create, manipulate, and explore nondeterministic finite automata (NFAs). NFAs are fundamental mathematical models used in computer science and linguistics for processing strings and recognizing patterns.
 
 With this tool, you can define custom automata and perform various operations on them, such as finding their union, concatenation, Kleene closure, and more. Additionally, you have the flexibility to convert NFAs to deterministic finite automata (DFAs), export them as Graphviz DOT files, and save your automata to files for later use.
