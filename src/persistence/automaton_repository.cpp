@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <fstream>
+#include <limits>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -16,7 +17,12 @@ std::vector<Automaton> AutomatonRepository::load(const std::filesystem::path& pa
     }
 
     std::size_t count{0};
-    file >> count;
+    
+    if (!(file >> count)) {
+        throw std::runtime_error{"Could not read file: " + path.string()};
+    }
+
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::vector<Automaton> automata;
     automata.reserve(count);
