@@ -74,7 +74,7 @@ Each automaton is written as six fields, in order:
 ...
 ```
 
-Fields are whitespace-delimited, so exact line breaks aren't load-bearing — but `save` always writes one field group per line, as shown above.
+The alphabet occupies its own line because an empty alphabet is represented by an empty line. `save` writes every field group exactly as shown above.
 
 ### Example
 
@@ -114,7 +114,7 @@ The tool provides the following commands:
 | print         | \<id\>              | Print an automaton                                   |
 | export        | \<id\> \<path\>     | Export an automaton as a Graphviz DOT file           |
 | empty         | \<id\>              | Check whether the language is empty                  |
-| finite        | \<id\>              | Check whether the language is finite                 | 
+| finite        | \<id\>              | Check whether the language is finite                 |
 | deterministic | \<id\>              | Check whether an automaton is deterministic          |
 | recognize     | \<id\> \<word\>     | Check whether an automaton recognizes a word         |
 | regex         | \<regex\>           | Create an automaton from a regular expression        |
