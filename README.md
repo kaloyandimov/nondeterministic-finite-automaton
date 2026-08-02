@@ -1,6 +1,8 @@
 # Nondeterministic Finite Automaton :robot:
 
-This is an interactive command-line tool that empowers you to create, manipulate, and explore nondeterministic finite automata (NFAs). NFAs are fundamental mathematical models used in computer science and linguistics for processing strings and recognizing patterns. With this tool, you can define custom automata and perform various operations on them, such as finding their union, concatenation, Kleene closure, and more. Additionally, you have the flexibility to convert NFAs to deterministic finite automata (DFAs), export them as Graphviz DOT files, and save your automata to files for later use.
+This is an interactive command-line tool that empowers you to create, manipulate, and explore nondeterministic finite automata (NFAs). NFAs are fundamental mathematical models used in computer science and linguistics for processing strings and recognizing patterns.
+
+With this tool, you can define custom automata and perform various operations on them, such as finding their union, concatenation, Kleene closure, and more. Additionally, you have the flexibility to convert NFAs to deterministic finite automata (DFAs), export them as Graphviz DOT files, and save your automata to files for later use.
 
 ## Table of Contents
 
@@ -104,28 +106,30 @@ Regular expressions are built from alphabet symbols (and `_` for ε) using:
 
 ## Supported Commands
 
-The tool provides a set of commands to interact with the automata. Use the following commands to perform specific actions:
+The tool provides the following commands:
 
-| Name          | Params              | Usage                                         |
-|---------------|---------------------|-----------------------------------------------|
-| list          | —                   | List all automaton IDs                        |
-| print         | \<id\>              | Print an automaton                            |
-| export        | \<id\> \<path\>     | Export an automaton as DOT                    |
-| empty         | \<id\>              | Check whether the language is empty           |
-| deterministic | \<id\>              | Check whether an automaton is deterministic   |
-| recognize     | \<id\> \<word\>     | Check whether an automaton recognizes a word  |
-| regex         | \<regex\>           | Create an automaton from a regular expression |
-| union         | \<id1\> \<id2\>     | Create the union of two automata              |
-| concat        | \<id1\> \<id2\>     | Concatenate two automata                      |
-| kleene        | \<id\>              | Create the Kleene star of an automaton        |
-| determinize   | \<id\>              | Determinize an NFA                            |
-| load          | \<filename\>        | Load automata into the current workspace      |
-| save          | \<filename\>        | Save all automata to a file                   |
-| save          | \<id\> \<filename\> | Save one automaton to a file                  |
-| remove        | \<id\>              | Remove an automaton from the workspace        |
-| clear         | —                   | Remove all automata from the workspace        |
-| help          | —                   | Display this list                             |
-| exit          | —                   | Exit the program                              |
+| Name          | Params              | Usage                                                |
+|---------------|---------------------|------------------------------------------------------|
+| list          | —                   | List all automaton IDs                               |
+| print         | \<id\>              | Print an automaton                                   |
+| export        | \<id\> \<path\>     | Export an automaton as a Graphviz DOT file           |
+| empty         | \<id\>              | Check whether the language is empty                  |
+| finite        | \<id\>              | Check whether the language is finite                 | 
+| deterministic | \<id\>              | Check whether an automaton is deterministic          |
+| recognize     | \<id\> \<word\>     | Check whether an automaton recognizes a word         |
+| regex         | \<regex\>           | Create an automaton from a regular expression        |
+| union         | \<id1\> \<id2\>     | Create the union of two automata                     |
+| concat        | \<id1\> \<id2\>     | Concatenate two automata                             |
+| kleene        | \<id\>              | Create the Kleene closure of an automaton            |
+| determinize   | \<id\>              | Create an equivalent deterministic automaton         |
+| minimize      | \<id\>              | Create an equivalent minimal deterministic automaton |
+| load          | \<filename\>        | Load automata into the current workspace             |
+| save          | \<id\> \<filename\> | Save one automaton to a file                         |
+| save          | \<filename\>        | Save all automata to a file                          |
+| remove        | \<id\>              | Remove an automaton from the workspace               |
+| clear         | —                   | Remove all automata from the workspace               |
+| help          | —                   | Display the available commands                       |
+| exit          | —                   | Exit the program                                     |
 
 ## Contributing
 
